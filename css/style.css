@@ -1,0 +1,11 @@
+.wysiwyg-textarea[contentEditable="false"] {
+  background-color:#eee
+}
+.wysiwyg-btn-group-margin {
+  margin-right:5px;
+}
+
+.wysiwyg-select {
+  height:30px;
+  margin-bottom:1px;
+}

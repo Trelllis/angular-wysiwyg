@@ -39,85 +39,85 @@
 
       angular.extend(ELEMENTS, custom);
 
-                //Get the default menu or the passed in menu
-                if (angular.isDefined(menu) && menu !== '') {
-                    menu = menu; //stringToArray(menu)
-                  } else {
-                    menu = DEFAULT_MENU;
-                  }
+      //Get the default menu or the passed in menu
+      if (angular.isDefined(menu) && menu !== '') {
+          menu = menu; //stringToArray(menu)
+        } else {
+          menu = DEFAULT_MENU;
+        }
 
-                //create div to add everything to.
-                var startDiv = document.createElement('div');
-                var el;
+      //create div to add everything to.
+      var startDiv = document.createElement('div');
+      var el;
 
-                for (var i = 0; i < menu.length; i++) {
-                  var menuGroup = create(getMenuGroup());
+      for (var i = 0; i < menu.length; i++) {
+        var menuGroup = create(getMenuGroup());
 
-                  for (var j = 0; j < menu[i].length; j++) {
-                        //link has two functions link and unlink
-                        if (menu[i][j] === 'link') {
-                          el = create(getMenuItem('unlink'));
-                          menuGroup.appendChild(el);
-                        }
+        for (var j = 0; j < menu[i].length; j++) {
+              //link has two functions link and unlink
+              if (menu[i][j] === 'link') {
+                el = create(getMenuItem('unlink'));
+                menuGroup.appendChild(el);
+              }
 
-                        el = create(getMenuItem(menu[i][j]));
-                        menuGroup.appendChild(el);
-                      }
+              el = create(getMenuItem(menu[i][j]));
+              menuGroup.appendChild(el);
+            }
 
-                      startDiv.appendChild(menuGroup);
-                    }
-                    return startDiv;
-                  };
+            startDiv.appendChild(menuGroup);
+          }
+          return startDiv;
+        };
 
 
-                  function create(obj) {
-                    var el;
-                    if (obj.tag) {
-                      el = document.createElement(obj.tag);
-                    } else if (obj.text) {
-                      el = document.createElement('span');
-                    } else {
-                      console.log('cannot create this element.');
-                      el = document.createElement('span');
-                      return el;
-                    }
+        function create(obj) {
+          var el;
+          if (obj.tag) {
+            el = document.createElement(obj.tag);
+          } else if (obj.text) {
+            el = document.createElement('span');
+          } else {
+            console.log('cannot create this element.');
+            el = document.createElement('span');
+            return el;
+          }
 
-                    if (obj.text && document.all) {
-                      el.innerText = obj.text;
-                    } else if (obj.text) {
-                      el.textContent = obj.text;
-                    }
+          if (obj.text && document.all) {
+            el.innerText = obj.text;
+          } else if (obj.text) {
+            el.textContent = obj.text;
+          }
 
-                    if (obj.classes) {
-                      el.className = obj.classes;
-                    }
+          if (obj.classes) {
+            el.className = obj.classes;
+          }
 
-                    if (obj.html) {
-                      el.innerHTML = obj.html;
-                    }
+          if (obj.html) {
+            el.innerHTML = obj.html;
+          }
 
-                    if (obj.attributes && obj.attributes.length) {
-                      for (var i in obj.attributes) {
-                        var attr = obj.attributes[i];
-                        if (attr.name && attr.value) {
-                          el.setAttribute(attr.name, attr.value);
-                        }
-                      }
-                    }
+          if (obj.attributes && obj.attributes.length) {
+            for (var i in obj.attributes) {
+              var attr = obj.attributes[i];
+              if (attr.name && attr.value) {
+                el.setAttribute(attr.name, attr.value);
+              }
+            }
+          }
 
-                    if (obj.data && obj.data.length) {
-                      for (var item in obj.data) {
-                        el.appendChild(create(obj.data[item]));
-                      }
-                    }
+          if (obj.data && obj.data.length) {
+            for (var item in obj.data) {
+              el.appendChild(create(obj.data[item]));
+            }
+          }
 
-                    return el;
-                  }
+          return el;
+        }
 
-                  return {
-                    createMenu: createMenu,
-                    setCustomElements: setCustomElements
-                  };
+        return {
+          createMenu: createMenu,
+          setCustomElements: setCustomElements
+        };
 
-                });
+      });
 })();
