@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
- 
+
   <head>
     <link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
     <script data-require="jquery@*" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -10,7 +10,7 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <script src="scripts/app.js"></script>
     <script src="scripts/bootstrap-colorpicker-module.js"></script>
-    <script src="../src/angular-wysiwyg.js"></script>
+    <script src="../dist/angular-wysiwyg.js"></script>
 
     <style type="text/css">
       .test1{
@@ -26,13 +26,13 @@
       <p>Your models data</p>
       <p style="height:80px; width:100%; border: 1px solid #ddd">
         {{data.text}}
-      </p> 
-        <wysiwyg textarea-id="question" 
-          textarea-class="form-control"  
-          textarea-height="180px" 
+      </p>
+        <wysiwyg textarea-id="question"
+          textarea-class="form-control"
+          textarea-height="180px"
           textarea-name="textareaQuestion"
-          textarea-required 
-          ng-model="data.text" 
+          textarea-required
+          ng-model="data.text"
           enable-bootstrap-title="true"
           textarea-menu="menu"
           disabled="disabled">

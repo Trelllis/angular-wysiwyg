@@ -1,5 +1,5 @@
 // Include gulp
-var gulp = require('gulp'); 
+var gulp = require('gulp');
 
 // Include Our Plugins
 var jshint = require('gulp-jshint');
@@ -18,8 +18,9 @@ gulp.task('lint', function() {
 
 // Concatenate & Minify JS
 gulp.task('scripts', function() {
-    return gulp.src('src/angular-wysiwyg.js')
-        .pipe(ngmin({dynamic: false}))
+    return gulp.src(['src/angular-wysiwyg.module.js', 'src/*.js'])
+        // .pipe(ngmin({dynamic: false}))
+        .pipe(concat('angular-wysiwyg.js'))
         .pipe(gulp.dest('dist'))
         .pipe(rename('angular-wysiwyg.min.js'))
         .pipe(uglify())
@@ -67,5 +68,5 @@ gulp.task('build', ['lint', 'scripts']);
 
 
 gulp.task('server', ['scripts', 'express', 'livereload', 'watch'], function() {
-    
+
 })
