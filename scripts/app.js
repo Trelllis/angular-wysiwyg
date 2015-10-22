@@ -4,16 +4,18 @@ app.controller('MyCtrl', function($scope) {
     $scope.data = {
         text: "hello"
     }
+
     $scope.disabled = false;
+
     $scope.menu = [
         ['bold', 'underline'],
         ['format-block'],
         ['remove-format'],
-        ['ordered-list', 'unordered-list', 'outdent', 'indent'],
+        ['ordered-list', 'unordered-list'],
         ['left-justify', 'center-justify', 'right-justify'],
-        ['quote', 'paragraph'],
-        ['link', 'image'],
-        ['css-class']
+        ['quote'],
+        ['link', 'images'],
+        ['instagram', 'twitter', 'youtube', 'facebook']
     ];
 
     $scope.cssClasses = ['test1', 'test2'];

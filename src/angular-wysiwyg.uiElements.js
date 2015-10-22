@@ -432,6 +432,24 @@
         value: 'setFont()'
       }]
     },
+    'images': {
+      tag: 'input',
+      classes: 'images-upload-file',
+      attributes: [{
+        name: 'title',
+        value: '',
+      },{
+        name: 'type',
+        value: 'file'
+      },{
+        name: 'id',
+        value: 'imagesInput'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-picture-o'
+      }]
+    },
     'font-size': {
       tag: 'select',
       classes: 'form-control wysiwyg-select',
@@ -506,6 +524,79 @@
       data: [{
         tag: 'i',
         classes: 'fa fa-unlink'
+      }]
+    }
+    ,
+    'instagram': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes:[{
+        name: 'title',
+        value: 'Instagram'
+      },{
+        name: 'ng-click',
+        value: 'insertInstagram()'
+      },{
+        name: 'type',
+        value: 'button'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-instagram'
+      }]
+    },
+    'twitter': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes:[{
+        name: 'title',
+        value: 'Twitter'
+      },{
+        name: 'ng-click',
+        value: 'insertTwitter()'
+      },{
+        name: 'type',
+        value: 'button'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-twitter'
+      }]
+    },
+    'youtube': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes: [{
+        name: 'title',
+        value: 'Youtube'
+      }, {
+          name: 'ng-click',
+          value: 'insertYoutube()'
+        }, {
+          name: 'type',
+          value: 'button'
+        }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-youtube'
+      }]
+    },
+    'facebook': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes: [{
+        name: 'title',
+        value: 'Facebook'
+      }, {
+          name: 'ng-click',
+          value: 'insertFacebook()'
+        }, {
+          name: 'type',
+          value: 'button'
+        }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-facebook'
       }]
     }
   });

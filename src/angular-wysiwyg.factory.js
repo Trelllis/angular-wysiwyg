@@ -11,7 +11,8 @@
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image'],
+        ['instagram', 'twitter', 'youtube']
     ];
 
   angular.module('wysiwyg.module')
