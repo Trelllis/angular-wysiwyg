@@ -226,6 +226,8 @@
                     }, 0);
                     // });
 
+                      var inputElement = document.getElementById("imagesInput");
+                      inputElement.addEventListener("change", insertFigure, false);
 
                 }
 
@@ -312,6 +314,44 @@
                 // scope.setHiliteColor = function() {
                 //     scope.format('hiliteColor', scope.hiliteColor);
                 // };
+
+                function insertFigure() {
+
+                  if (this.files && this.files[0]) {
+                      var reader = new FileReader();
+
+                      reader.onload = function(e) {
+
+                          var figure = document.createElement('figure');
+
+                          var el = document.createElement('img');
+                          el.setAttribute('src', e.target.result);
+
+                          figure.appendChild(el);
+                          var sel, range;
+
+                          sel = window.getSelection();
+                          if (sel.getRangeAt && sel.rangeCount) {
+
+                              range = sel.getRangeAt(0);
+                              range.insertNode(figure);
+                              figure.parentNode.contentEditable = "false";
+
+                              if (figure) {
+                                  range = range.cloneRange();
+                                  range.setStartAfter(figure.parentNode);
+                                  range.collapse(true);
+                                  var ell = document.createElement('div');
+                                  ell.innerHTML = "<br>";
+                                  range.insertNode(ell);
+                                  sel.removeAllRanges();
+                                  sel.addRange(range);
+                              }
+                          }
+                      }
+                      reader.readAsDataURL(this.files[0]);
+                  }
+              }
 
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
