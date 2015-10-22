@@ -18,9 +18,17 @@ app.controller('MyCtrl', function($scope) {
         ['instagram', 'twitter', 'youtube', 'facebook']
     ];
 
-    $scope.cssClasses = ['test1', 'test2'];
 
-    $scope.setDisabled = function() {
-        $scope.disabled = !$scope.disabled;
+    $scope.sendData = function () {
+      console.log($scope.data.text);
+      var z = [];
+      var t = document.getElementById("question").childNodes;
+      console.log(t);
+      var div_array = Array.prototype.slice.call(t);
+      div_array.forEach(function(element, index, array){
+        var el = element.outerHTML || element.textContent;
+          z.push(el);
+      });
+
     }
-})
+});

@@ -1,6 +1,10 @@
 .wysiwyg-textarea[contentEditable="false"] {
   background-color:#eee
 }
+.wysiwyg-textarea.form-control{
+  height: auto;
+  min-height: 200px;
+}
 .wysiwyg-btn-group-margin {
   margin-right:5px;
 }

@@ -33,330 +33,537 @@ Requires:
 
 (function() {
   'use strict';
+
   angular.module('wysiwyg.module')
-  .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
-    return {
-      template: '<div>' +
-      '<style>' +
-      '   .wysiwyg-textarea[contentEditable="false"] { background-color:#eee}' +
-      '   .wysiwyg-btn-group-margin { margin-right:5px; }' +
-      '   .wysiwyg-select { height:30px;margin-bottom:1px;}' +
-      '   .wysiwyg-colorpicker { font-family: arial, sans-serif !important;font-size:16px !important; padding:2px 10px !important;}' +
-      '</style>' +
-      '<div class="wysiwyg-menu"></div>' +
-      '<div id="{{textareaId}}" ng-attr-style="resize:vertical;height:{{textareaHeight || \'80px\'}}; overflow:auto" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
-      '</div>',
-      restrict: 'E',
-      scope: {
-        value: '=ngModel',
-        textareaHeight: '@textareaHeight',
-        textareaName: '@textareaName',
-        textareaClass: '@textareaClass',
-        textareaRequired: '@textareaRequired',
-        textareaId: '@textareaId',
-        textareaMenu: '=textareaMenu',
-        textareaCustomMenu: '=textareaCustomMenu',
-        fn: '&',
-        disabled: '=?disabled',
-      },
-      replace: true,
-      require: 'ngModel',
-      link: link,
-      transclude: true
-    };
+    .factory('socialEmbeds', socialEmbeds);
 
-    function link(scope, element, attrs, ngModelController) {
+  function socialEmbeds($http){
+    return{
+      getInstagramEmbed: getInstagramEmbed,
+      getTwitterEmbed: getTwitterEmbed
+    }
 
-      var textarea = element.find('div.wysiwyg-textarea');
+    function getInstagramEmbed(url){
+      return $http.jsonp('http://api.instagram.com/oembed?url=' + url + '&omitscript=true&callback=JSON_CALLBACK')
+            .then(function(response){
+              return response.data;
+            });
+    }
 
-      scope.isLink = false;
+    function getTwitterEmbed(url){
+      return $http.jsonp('https://api.twitter.com/1/statuses/oembed.json?url=' + url + '&omit_script=true&lang=ar&callback=JSON_CALLBACK')
+              .then(function (response) {
+                return response.data;
+              });
+    }
+  }
 
-      scope.fontSizes = [{
-        value: '1',
-        size: '10px'
-      }, {
-        value: '2',
-        size: '13px'
-      }, {
-        value: '3',
-        size: '16px'
-      }, {
-        value: '4',
-        size: '18px'
-      }, {
-        value: '5',
-        size: '24px'
-      }, {
-        value: '6',
-        size: '32px'
-      }, {
-        value: '7',
-        size: '48px'
-      }];
+})();
 
-      scope.formatBlocks = [{
-        name: 'Heading Blocks',
-        value: 'div'
-      }, {
-        name: 'Heading 1',
-        value: 'h1'
-      }, {
-        name: 'Heading 2',
-        value: 'h2'
-      }, {
-        name: 'Heading 3',
-        value: 'h3'
-      }, {
-        name: 'Heading 4',
-        value: 'h4'
-      }, {
-        name: 'Heading 5',
-        value: 'h5'
-      }, {
-        name: 'Heading 6',
-        value: 'h6'
-      }, ];
-      scope.formatBlock = scope.formatBlocks[0];
+(function() {
+    'use strict';
+    angular.module('wysiwyg.module')
+        .directive('wysiwyg', function($timeout, wysiwgGui, $compile, socialEmbeds) {
+            return {
+                template: '<div>' +
+                    '<div class="wysiwyg-menu"></div>' +
+                    '<div id="{{textareaId}}" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                    '</div>',
+                restrict: 'E',
+                scope: {
+                    value: '=ngModel',
+                    textareaName: '@textareaName',
+                    textareaClass: '@textareaClass',
+                    textareaRequired: '@textareaRequired',
+                    textareaId: '@textareaId',
+                    textareaMenu: '=textareaMenu',
+                    textareaCustomMenu: '=textareaCustomMenu',
+                    fn: '&',
+                    disabled: '=?disabled',
+                },
+                replace: true,
+                require: 'ngModel',
+                link: link,
+                transclude: true
+            };
 
-      scope.fontSize = scope.fontSizes[1];
+            function link(scope, element, attrs, ngModelController) {
 
-      if (angular.isArray(scope.cssClasses)) {
-        scope.cssClasses.unshift('css');
-        scope.cssClass = scope.cssClasses[0];
-      }
+                var textarea = element.find('div.wysiwyg-textarea');
 
-      scope.fonts = [
-      'Georgia',
-      'Palatino Linotype',
-      'Times New Roman',
-      'Arial',
-      'Helvetica',
-      'Arial Black',
-      'Comic Sans MS',
-      'Impact',
-      'Lucida Sans Unicode',
-      'Tahoma',
-      'Trebuchet MS',
-      'Verdana',
-      'Courier New',
-      'Lucida Console',
-      'Helvetica Neue'
-      ].sort();
+                scope.isLink = false;
 
-      scope.font = scope.fonts[6];
+                // scope.fontSizes = [{
+                //     value: '1',
+                //     size: '10px'
+                // }, {
+                //     value: '2',
+                //     size: '13px'
+                // }, {
+                //     value: '3',
+                //     size: '16px'
+                // }, {
+                //     value: '4',
+                //     size: '18px'
+                // }, {
+                //     value: '5',
+                //     size: '24px'
+                // }, {
+                //     value: '6',
+                //     size: '32px'
+                // }, {
+                //     value: '7',
+                //     size: '48px'
+                // }];
+                // scope.fontSize = scope.fontSizes[1];
 
-      init();
+                // scope.fonts = [
+                //     'Georgia',
+                //     'Palatino Linotype',
+                //     'Times New Roman',
+                //     'Arial',
+                //     'Helvetica',
+                //     'Arial Black',
+                //     'Comic Sans MS',
+                //     'Impact',
+                //     'Lucida Sans Unicode',
+                //     'Tahoma',
+                //     'Trebuchet MS',
+                //     'Verdana',
+                //     'Courier New',
+                //     'Lucida Console',
+                //     'Helvetica Neue'
+                // ].sort();
 
-      function init() {
+                // scope.font = scope.fonts[6];
 
-        compileMenu();
-        configureDisabledWatch();
-        configureBootstrapTitle();
-        configureListeners();
-      }
+                scope.formatBlocks = [{
+                    name: 'Heading Blocks',
+                    value: 'div'
+                }, {
+                    name: 'Heading 1',
+                    value: 'h1'
+                }, {
+                    name: 'Heading 2',
+                    value: 'h2'
+                }, {
+                    name: 'Heading 3',
+                    value: 'h3'
+                }, {
+                    name: 'Heading 4',
+                    value: 'h4'
+                }, {
+                    name: 'Heading 5',
+                    value: 'h5'
+                }, {
+                    name: 'Heading 6',
+                    value: 'h6'
+                }, ];
+                scope.formatBlock = scope.formatBlocks[0];
 
-      function compileMenu() {
-        wysiwgGui.setCustomElements(scope.textareaCustomMenu);
-        var menuDiv = element.children('div.wysiwyg-menu')[0];
-        menuDiv.appendChild(wysiwgGui.createMenu(scope.textareaMenu));
-        $compile(menuDiv)(scope);
-      }
+                if (angular.isArray(scope.cssClasses)) {
+                    scope.cssClasses.unshift('css');
+                    scope.cssClass = scope.cssClasses[0];
+                }
 
-      function configureDisabledWatch() {
-        scope.$watch('disabled', function(newValue) {
-          angular.element('div.wysiwyg-menu').find('button').each(function() {
-            angular.element(this).attr('disabled', newValue);
-          });
-          angular.element('div.wysiwyg-menu').find('select').each(function() {
-            angular.element(this).attr('disabled', newValue);
-          });
-        });
-      }
+                init();
 
-      function configureBootstrapTitle() {
-        if (attrs.enableBootstrapTitle === 'true' && attrs.enableBootstrapTitle !== undefined) {
-          element.find('button[title]').tooltip({
-            container: 'body'
-          });
-        }
-      }
+                function init() {
+                    compileMenu();
+                    configureDisabledWatch();
+                    configureBootstrapTitle();
+                    configureListeners();
+                }
 
-      function insertTab(html, position) {
-        var begining = html.substr(0, position);
-        var end = html.substr(position);
-        return begining + '<span style="white-space:pre">    </span>' + end;
-      }
+                function compileMenu() {
+                    wysiwgGui.setCustomElements(scope.textareaCustomMenu);
+                    var menuDiv = element.children('div.wysiwyg-menu')[0];
+                    menuDiv.appendChild(wysiwgGui.createMenu(scope.textareaMenu));
+                    $compile(menuDiv)(scope);
+                }
 
-      function configureListeners() {
+                function configureDisabledWatch() {
+                    scope.$watch('disabled', function(newValue) {
+                        angular.element('div.wysiwyg-menu').find('button').each(function() {
+                            angular.element(this).attr('disabled', newValue);
+                        });
+                        angular.element('div.wysiwyg-menu').find('select').each(function() {
+                            angular.element(this).attr('disabled', newValue);
+                        });
+                    });
+                }
+
+                function configureBootstrapTitle() {
+                    if (attrs.enableBootstrapTitle === 'true' && attrs.enableBootstrapTitle !== undefined) {
+                        element.find('button[title]').tooltip({
+                            container: 'body'
+                        });
+                    }
+                }
+
+                function insertTab(html, position) {
+                    var begining = html.substr(0, position);
+                    var end = html.substr(position);
+                    return begining + '<span style="white-space:pre">    </span>' + end;
+                }
+
+                function configureListeners() {
 
                     //Send message to calling controller that a button has been clicked.
                     angular.element('.wysiwyg-menu').find('button').on('click', function() {
-                      var title = angular.element(this);
-                      scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
+                        var title = angular.element(this);
+                        scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
                     });
 
-                    textarea.on('input keyup paste mouseup', function() {
-                      var html = textarea.html();
+                    textarea.on('input keyup paste mouseup focus', function() {
+                        var html = textarea.html();
+                        if (html == '<br>') {
+                            html = '';
+                        }
 
-                      if (html == '<br>') {
-                        html = '';
-                      }
-
-                      ngModelController.$setViewValue(html);
+                        ngModelController.$setViewValue(html);
                     });
 
                     textarea.on('keydown', function(event) {
-                      if (event.keyCode == 9) {
-                        var TAB_SPACES = 4;
-                        var html = textarea.html();
-                        var selection = window.getSelection();
-                        var position = selection.anchorOffset;
+                        if (event.keyCode == 9) {
+                            var TAB_SPACES = 4;
+                            var html = textarea.html();
+                            var selection = window.getSelection();
+                            var position = selection.anchorOffset;
 
-                        event.preventDefault();
+                            event.preventDefault();
                             // html = insertTab(html, position);
                             // textarea.html(html);
                             // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
-                          }
-                        });
+                        }
 
-                    textarea.on('click keyup focus mouseup', function() {
-                      $timeout(function() {
+                    });
+
+                    // textarea.on('click keyup focus mouseup', function() {
+                    $timeout(function() {
                         scope.isBold = scope.cmdState('bold');
                         scope.isUnderlined = scope.cmdState('underline');
                         scope.isStrikethrough = scope.cmdState('strikethrough');
-                        scope.isItalic = scope.cmdState('italic');
-                            scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
-                            scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
-                            scope.isRightJustified = scope.cmdState('justifyright');
-                            scope.isLeftJustified = scope.cmdState('justifyleft');
-                            scope.isCenterJustified = scope.cmdState('justifycenter');
-                            scope.isPre = scope.cmdValue('formatblock') === 'pre';
-                            scope.isBlockquote = scope.cmdValue('formatblock') === 'blockquote';
+                        scope.isBlockquote = scope.cmdValue('formatblock') === 'blockquote';
+                        scope.isOrderedList = scope.cmdState('insertorderedlist');
+                        scope.isUnorderedList = scope.cmdState('insertunorderedlist');
 
-                            scope.isOrderedList = scope.cmdState('insertorderedlist');
-                            scope.isUnorderedList = scope.cmdState('insertunorderedlist');
-
-                            scope.fonts.forEach(function(v, k) { //works but kinda crappy.
-                              if (scope.cmdValue('fontname').indexOf(v) > -1) {
-                                scope.font = v;
-                                return false;
-                              }
-                            });
-                            scope.cmdValue('formatblock').toLowerCase();
-                            scope.formatBlocks.forEach(function(v, k) {
-                              if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
+                        scope.cmdValue('formatblock').toLowerCase();
+                        scope.formatBlocks.forEach(function(v, k) {
+                            if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
                                 scope.formatBlock = v;
                                 return false;
-                              }
-                            });
+                            }
+                        });
 
-                            scope.fontSizes.forEach(function(v, k) {
-                              if (scope.cmdValue('fontsize') === v.value) {
-                                scope.fontSize = v;
-                                return false;
-                              }
-                            });
+                        // scope.isItalic = scope.cmdState('italic');
+                        // scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
+                        // scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
+                        // scope.isRightJustified = scope.cmdState('justifyright');
+                        // scope.isLeftJustified = scope.cmdState('justifyleft');
+                        // scope.isCenterJustified = scope.cmdState('justifycenter');
+                        // scope.isPre = scope.cmdValue('formatblock') === 'pre';
+                        // scope.fonts.forEach(function(v, k) { //works but kinda crappy.
+                        //     if (scope.cmdValue('fontname').indexOf(v) > -1) {
+                        //         scope.font = v;
+                        //         return false;
+                        //     }
+                        // });
 
-                            scope.hiliteColor = getHiliteColor();
-                            element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
+                        // scope.fontSizes.forEach(function(v, k) {
+                        //     if (scope.cmdValue('fontsize') === v.value) {
+                        //         scope.fontSize = v;
+                        //         return false;
+                        //     }
+                        // });
 
-                            scope.fontColor = scope.cmdValue('forecolor');
-                            element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                        // scope.hiliteColor = getHiliteColor();
+                        // element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
 
-                            scope.isLink = itemIs('A');
+                        // scope.fontColor = scope.cmdValue('forecolor');
+                        // element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
 
-                          }, 0);
-});
-}
+                        // scope.isLink = itemIs('A');
+
+                    }, 0);
+                    // });
+
+                      var inputElement = document.getElementById("imagesInput");
+                      inputElement.addEventListener("change", insertFigure, false);
+
+                }
 
                 //Used to detect things like A tags and others that dont work with cmdValue().
                 function itemIs(tag) {
-                  var selection = window.getSelection().getRangeAt(0);
-                  if (selection) {
-                    if (selection.startContainer.parentNode.tagName === tag.toUpperCase() || selection.endContainer.parentNode.tagName === tag.toUpperCase()) {
-                      return true;
+                    var selection = window.getSelection().getRangeAt(0);
+                    if (selection) {
+                        if (selection.startContainer.parentNode.tagName === tag.toUpperCase() || selection.endContainer.parentNode.tagName === tag.toUpperCase()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     } else {
-                      return false;
+                        return false;
                     }
-                  } else {
-                    return false;
-                  }
                 }
 
                 //Used to detect things like A tags and others that dont work with cmdValue().
                 function getHiliteColor() {
-                  var selection = window.getSelection().getRangeAt(0);
-                  if (selection) {
-                    var style = angular.element(selection.startContainer.parentNode).attr('style');
+                    var selection = window.getSelection().getRangeAt(0);
+                    if (selection) {
+                        var style = angular.element(selection.startContainer.parentNode).attr('style');
 
-                    if (!angular.isDefined(style))
-                      return false;
+                        if (!angular.isDefined(style))
+                            return false;
 
-                    var a = style.split(';');
-                    for (var i = 0; i < a.length; i++) {
-                      var s = a[i].split(':');
-                      if (s[0] === 'background-color')
-                        return s[1];
+                        var a = style.split(';');
+                        for (var i = 0; i < a.length; i++) {
+                            var s = a[i].split(':');
+                            if (s[0] === 'background-color')
+                                return s[1];
+                        }
+                        return '#fff';
+                    } else {
+                        return '#fff';
                     }
-                    return '#fff';
-                  } else {
-                    return '#fff';
-                  }
                 }
 
                 // model -> view
                 ngModelController.$render = function() {
-                  textarea.html(ngModelController.$viewValue);
+                    textarea.html(ngModelController.$viewValue);
                 };
 
                 scope.format = function(cmd, arg) {
-                  document.execCommand(cmd, false, arg);
+                    document.execCommand(cmd, false, arg);
                 };
 
                 scope.cmdState = function(cmd) {
-                  return document.queryCommandState(cmd);
+                    return document.queryCommandState(cmd);
                 };
 
                 scope.cmdValue = function(cmd) {
-                  return document.queryCommandValue(cmd);
+                    return document.queryCommandValue(cmd);
                 };
 
                 scope.createLink = function() {
-                  var input = prompt('Enter the link URL');
-                  if (input && input !== undefined)
-                    scope.format('createlink', input);
+                    var input = prompt('Enter the link URL');
+                    if (input && input !== undefined)
+                        scope.format('createlink', input);
                 };
 
                 scope.insertImage = function() {
-                  var input = prompt('Enter the image URL');
-                  if (input && input !== undefined)
-                    scope.format('insertimage', input);
+                    var input = prompt('Enter the image URL');
+                    if (input && input !== undefined)
+                        scope.format('insertimage', input);
                 };
 
-                scope.setFont = function() {
-                  scope.format('fontname', scope.font);
-                };
+                // scope.setFont = function() {
+                //     scope.format('fontname', scope.font);
+                // };
 
-                scope.setFontSize = function() {
-                  scope.format('fontsize', scope.fontSize.value);
-                };
+                // scope.setFontSize = function() {
+                //     scope.format('fontsize', scope.fontSize.value);
+                // };
 
                 scope.setFormatBlock = function() {
-                  scope.format('formatBlock', scope.formatBlock.value);
+                    scope.format('formatBlock', scope.formatBlock.value);
                 };
 
-                scope.setFontColor = function() {
-                  scope.format('forecolor', scope.fontColor);
-                };
+                // scope.setFontColor = function() {
+                //     scope.format('forecolor', scope.fontColor);
+                // };
 
-                scope.setHiliteColor = function() {
-                  scope.format('hiliteColor', scope.hiliteColor);
-                };
+                // scope.setHiliteColor = function() {
+                //     scope.format('hiliteColor', scope.hiliteColor);
+                // };
+
+                function insertFigure() {
+
+                  if (this.files && this.files[0]) {
+                      var reader = new FileReader();
+
+                      reader.onload = function(e) {
+
+                          var figure = document.createElement('figure');
+
+                          var el = document.createElement('img');
+                          el.setAttribute('src', e.target.result);
+
+                          figure.appendChild(el);
+                          var sel, range;
+
+                          sel = window.getSelection();
+                          if (sel.getRangeAt && sel.rangeCount) {
+
+                              range = sel.getRangeAt(0);
+                              range.insertNode(figure);
+                              figure.parentNode.contentEditable = "false";
+
+                              if (figure) {
+                                  range = range.cloneRange();
+                                  range.setStartAfter(figure.parentNode);
+                                  range.collapse(true);
+                                  var ell = document.createElement('div');
+                                  ell.innerHTML = "<br>";
+                                  range.insertNode(ell);
+                                  sel.removeAllRanges();
+                                  sel.addRange(range);
+                              }
+                          }
+                      }
+                      reader.readAsDataURL(this.files[0]);
+                  }
+              }
+
+
+                scope.insertInstagram = function() {
+                    var instagramUrl = prompt('Enter instagram url');
+                    var sel, range;
+
+                    sel = window.getSelection();
+                    if (instagramUrl !== "" && instagramUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+
+                            var el = document.createElement('div');
+                            el.classList.add('instagram_embed_wrapper');
+                            el.setAttribute('data-link', instagramUrl);
+
+                            socialEmbeds.getInstagramEmbed(instagramUrl)
+                                .then(function(response) {
+
+                                    el.innerHTML = response.html;
+                                    range.insertNode(el);
+                                    el.parentNode.contentEditable = "false";
+                                    instgrm.Embeds.process();
+
+                                    if (el) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(el.parentNode);
+                                        range.collapse(true);
+                                        var ell = document.createElement('div');
+                                        ell.innerHTML = "<br>";
+                                        range.insertNode(ell);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
+                                });
+                        }
+                    }
+                }
+
+
+                scope.insertTwitter = function() {
+                    var twitterUrl = prompt('Enter Twitter url');
+                    var sel, range;
+                    sel = window.getSelection();
+                    if (twitterUrl !== "" && twitterUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+
+                            var el = document.createElement('div');
+                            el.classList.add('twitter_embed_wrapper');
+                            el.setAttribute('data-link', twitterUrl);
+
+                            socialEmbeds.getTwitterEmbed(twitterUrl)
+                                .then(function(response) {
+
+                                    el.innerHTML = response.html;
+                                    range.insertNode(el);
+                                    el.parentNode.contentEditable = "false";
+                                    twttr.widgets.load();
+
+                                    if (el) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(el.parentNode);
+                                        range.collapse(true);
+                                        var ell = document.createElement('div');
+                                        ell.innerHTML = "<br>";
+                                        range.insertNode(ell);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
+                                });
+                        }
+                    }
+                }
+
+                scope.insertYoutube = function() {
+                    var youtubeUrl = window.prompt("Enter Youtube Url");
+                    var sel, range;
+
+                    sel = window.getSelection();
+
+                    if (youtubeUrl !== "" && youtubeUrl !== null) {
+
+                        var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+                            var el = document.createElement("div");
+                            el.setAttribute('data-link', 'https://www.youtube.com/embed/' + guid[0].substring(3));
+                            el.classList.add('youtube_player_wrapper');
+
+                            el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
+                            range.insertNode(el);
+                            el.parentNode.contentEditable = "false";
+
+                            $timeout(function() {
+                                if (el) {
+                                    range = range.cloneRange();
+                                    range.setStartAfter(el.parentNode);
+                                    range.collapse(true);
+                                    var ell = document.createElement('div');
+                                    ell.innerHTML = "<br>";
+                                    range.insertNode(ell);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
+                            }, 500);
+                        }
+                    }
+                }
+
+                scope.insertFacebook = function() {
+                    var sel, range;
+                    sel = window.getSelection();
+                    var facebookUrl = window.prompt("Enter facebook Url");
+
+                    if (facebookUrl !== "" && facebookUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+                            var el = document.createElement("div");
+                            el.setAttribute('data-link', facebookUrl);
+                            el.classList.add('facebook_embed_wrapper');
+
+                            el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                            range.insertNode(el);
+                            el.parentNode.contentEditable = "false";
+
+                            $timeout(function() {
+                                window.FB.XFBML.parse();
+                                if (el) {
+                                    range = range.cloneRange();
+                                    range.setStartAfter(el.parentNode);
+                                    range.collapse(true);
+                                    var ell = document.createElement("div");
+                                    ell.innerHTML = "<br>";
+                                    range.insertNode(ell);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
+                            }, 100);
+                        }
+                    }
+                }
 
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
-              }
-            })
+            }
+        });
 })();
 
 (function() {
@@ -372,7 +579,8 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image']
+        ['link', 'image'],
+        ['instagram', 'twitter', 'youtube']
     ];
 
   angular.module('wysiwyg.module')
@@ -400,87 +608,87 @@ Requires:
 
       angular.extend(ELEMENTS, custom);
 
-                //Get the default menu or the passed in menu
-                if (angular.isDefined(menu) && menu !== '') {
-                    menu = menu; //stringToArray(menu)
-                  } else {
-                    menu = DEFAULT_MENU;
-                  }
+      //Get the default menu or the passed in menu
+      if (angular.isDefined(menu) && menu !== '') {
+          menu = menu; //stringToArray(menu)
+        } else {
+          menu = DEFAULT_MENU;
+        }
 
-                //create div to add everything to.
-                var startDiv = document.createElement('div');
-                var el;
+      //create div to add everything to.
+      var startDiv = document.createElement('div');
+      var el;
 
-                for (var i = 0; i < menu.length; i++) {
-                  var menuGroup = create(getMenuGroup());
+      for (var i = 0; i < menu.length; i++) {
+        var menuGroup = create(getMenuGroup());
 
-                  for (var j = 0; j < menu[i].length; j++) {
-                        //link has two functions link and unlink
-                        if (menu[i][j] === 'link') {
-                          el = create(getMenuItem('unlink'));
-                          menuGroup.appendChild(el);
-                        }
+        for (var j = 0; j < menu[i].length; j++) {
+              //link has two functions link and unlink
+              if (menu[i][j] === 'link') {
+                el = create(getMenuItem('unlink'));
+                menuGroup.appendChild(el);
+              }
 
-                        el = create(getMenuItem(menu[i][j]));
-                        menuGroup.appendChild(el);
-                      }
+              el = create(getMenuItem(menu[i][j]));
+              menuGroup.appendChild(el);
+            }
 
-                      startDiv.appendChild(menuGroup);
-                    }
-                    return startDiv;
-                  };
+            startDiv.appendChild(menuGroup);
+          }
+          return startDiv;
+        };
 
 
-                  function create(obj) {
-                    var el;
-                    if (obj.tag) {
-                      el = document.createElement(obj.tag);
-                    } else if (obj.text) {
-                      el = document.createElement('span');
-                    } else {
-                      console.log('cannot create this element.');
-                      el = document.createElement('span');
-                      return el;
-                    }
+        function create(obj) {
+          var el;
+          if (obj.tag) {
+            el = document.createElement(obj.tag);
+          } else if (obj.text) {
+            el = document.createElement('span');
+          } else {
+            console.log('cannot create this element.');
+            el = document.createElement('span');
+            return el;
+          }
 
-                    if (obj.text && document.all) {
-                      el.innerText = obj.text;
-                    } else if (obj.text) {
-                      el.textContent = obj.text;
-                    }
+          if (obj.text && document.all) {
+            el.innerText = obj.text;
+          } else if (obj.text) {
+            el.textContent = obj.text;
+          }
 
-                    if (obj.classes) {
-                      el.className = obj.classes;
-                    }
+          if (obj.classes) {
+            el.className = obj.classes;
+          }
 
-                    if (obj.html) {
-                      el.innerHTML = obj.html;
-                    }
+          if (obj.html) {
+            el.innerHTML = obj.html;
+          }
 
-                    if (obj.attributes && obj.attributes.length) {
-                      for (var i in obj.attributes) {
-                        var attr = obj.attributes[i];
-                        if (attr.name && attr.value) {
-                          el.setAttribute(attr.name, attr.value);
-                        }
-                      }
-                    }
+          if (obj.attributes && obj.attributes.length) {
+            for (var i in obj.attributes) {
+              var attr = obj.attributes[i];
+              if (attr.name && attr.value) {
+                el.setAttribute(attr.name, attr.value);
+              }
+            }
+          }
 
-                    if (obj.data && obj.data.length) {
-                      for (var item in obj.data) {
-                        el.appendChild(create(obj.data[item]));
-                      }
-                    }
+          if (obj.data && obj.data.length) {
+            for (var item in obj.data) {
+              el.appendChild(create(obj.data[item]));
+            }
+          }
 
-                    return el;
-                  }
+          return el;
+        }
 
-                  return {
-                    createMenu: createMenu,
-                    setCustomElements: setCustomElements
-                  };
+        return {
+          createMenu: createMenu,
+          setCustomElements: setCustomElements
+        };
 
-                });
+      });
 })();
 
 (function() {
@@ -917,6 +1125,24 @@ Requires:
         value: 'setFont()'
       }]
     },
+    'images': {
+      tag: 'input',
+      classes: 'images-upload-file',
+      attributes: [{
+        name: 'title',
+        value: '',
+      },{
+        name: 'type',
+        value: 'file'
+      },{
+        name: 'id',
+        value: 'imagesInput'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-picture-o'
+      }]
+    },
     'font-size': {
       tag: 'select',
       classes: 'form-control wysiwyg-select',
@@ -991,6 +1217,79 @@ Requires:
       data: [{
         tag: 'i',
         classes: 'fa fa-unlink'
+      }]
+    }
+    ,
+    'instagram': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes:[{
+        name: 'title',
+        value: 'Instagram'
+      },{
+        name: 'ng-click',
+        value: 'insertInstagram()'
+      },{
+        name: 'type',
+        value: 'button'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-instagram'
+      }]
+    },
+    'twitter': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes:[{
+        name: 'title',
+        value: 'Twitter'
+      },{
+        name: 'ng-click',
+        value: 'insertTwitter()'
+      },{
+        name: 'type',
+        value: 'button'
+      }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-twitter'
+      }]
+    },
+    'youtube': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes: [{
+        name: 'title',
+        value: 'Youtube'
+      }, {
+          name: 'ng-click',
+          value: 'insertYoutube()'
+        }, {
+          name: 'type',
+          value: 'button'
+        }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-youtube'
+      }]
+    },
+    'facebook': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes: [{
+        name: 'title',
+        value: 'Facebook'
+      }, {
+          name: 'ng-click',
+          value: 'insertFacebook()'
+        }, {
+          name: 'type',
+          value: 'button'
+        }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-facebook'
       }]
     }
   });
