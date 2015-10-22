@@ -428,6 +428,41 @@
                     }
                 }
 
+                scope.insertYoutube = function() {
+                    var youtubeUrl = window.prompt("Enter Youtube Url");
+                    var sel, range;
+
+                    sel = window.getSelection();
+
+                    if (youtubeUrl !== "" && youtubeUrl !== null) {
+
+                        var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+                            var el = document.createElement("div");
+                            el.setAttribute('data-link', 'https://www.youtube.com/embed/' + guid[0].substring(3));
+                            el.classList.add('youtube_player_wrapper');
+
+                            el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
+                            range.insertNode(el);
+                            el.parentNode.contentEditable = "false";
+
+                            $timeout(function() {
+                                if (el) {
+                                    range = range.cloneRange();
+                                    range.setStartAfter(el.parentNode);
+                                    range.collapse(true);
+                                    var ell = document.createElement('div');
+                                    ell.innerHTML = "<br>";
+                                    range.insertNode(ell);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
+                            }, 500);
+                        }
+                    }
+                }
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
