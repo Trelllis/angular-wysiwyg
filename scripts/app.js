@@ -30,5 +30,6 @@ app.controller('MyCtrl', function($scope) {
           z.push(el);
       });
 
+      console.log(z);
     }
 });
