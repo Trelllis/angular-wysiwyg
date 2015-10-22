@@ -353,6 +353,44 @@
                   }
               }
 
+
+                scope.insertInstagram = function() {
+                    var instagramUrl = prompt('Enter instagram url');
+                    var sel, range;
+
+                    sel = window.getSelection();
+                    if (instagramUrl !== "" && instagramUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+
+                            var el = document.createElement('div');
+                            el.classList.add('instagram_embed_wrapper');
+                            el.setAttribute('data-link', instagramUrl);
+
+                            socialEmbeds.getInstagramEmbed(instagramUrl)
+                                .then(function(response) {
+
+                                    el.innerHTML = response.html;
+                                    range.insertNode(el);
+                                    el.parentNode.contentEditable = "false";
+                                    instgrm.Embeds.process();
+
+                                    if (el) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(el.parentNode);
+                                        range.collapse(true);
+                                        var ell = document.createElement('div');
+                                        ell.innerHTML = "<br>";
+                                        range.insertNode(ell);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
+                                });
+                        }
+                    }
+                }
+
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
