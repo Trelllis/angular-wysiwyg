@@ -1,9 +1,12 @@
 (function() {
     'use strict';
     angular.module('wysiwyg.module')
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile) {
-
-                templateUrl: 'templates/template.html',
+        .directive('wysiwyg', function($timeout, wysiwgGui, $compile, socialEmbeds) {
+            return {
+                template: '<div>' +
+                    '<div class="wysiwyg-menu"></div>' +
+                    '<div id="{{textareaId}}" contentEditable="{{!disabled}}" class="{{textareaClass}} wysiwyg-textarea" rows="{{textareaRows}}" name="{{textareaName}}" required="{{textareaRequired}}" placeholder="{{textareaPlaceholder}}" ng-model="value"></div>' +
+                    '</div>',
                 restrict: 'E',
                 scope: {
                     value: '=ngModel',
