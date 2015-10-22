@@ -147,35 +147,35 @@
 
                 function configureListeners() {
 
-                  //Send message to calling controller that a button has been clicked.
-                  angular.element('.wysiwyg-menu').find('button').on('click', function() {
-                      var title = angular.element(this);
-                      scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
-                  });
+                    //Send message to calling controller that a button has been clicked.
+                    angular.element('.wysiwyg-menu').find('button').on('click', function() {
+                        var title = angular.element(this);
+                        scope.$emit('wysiwyg.click', title.attr('title') || title.attr('data-original-title'));
+                    });
 
-                  textarea.on('input keyup paste mouseup', function() {
-                      var html = textarea.html();
+                    textarea.on('input keyup paste mouseup focus', function() {
+                        var html = textarea.html();
+                        if (html == '<br>') {
+                            html = '';
+                        }
 
-                      if (html == '<br>') {
-                          html = '';
-                      }
+                        ngModelController.$setViewValue(html);
+                    });
 
-                      ngModelController.$setViewValue(html);
-                  });
+                    textarea.on('keydown', function(event) {
+                        if (event.keyCode == 9) {
+                            var TAB_SPACES = 4;
+                            var html = textarea.html();
+                            var selection = window.getSelection();
+                            var position = selection.anchorOffset;
 
-                  textarea.on('keydown', function(event) {
-                      if (event.keyCode == 9) {
-                          var TAB_SPACES = 4;
-                          var html = textarea.html();
-                          var selection = window.getSelection();
-                          var position = selection.anchorOffset;
+                            event.preventDefault();
+                            // html = insertTab(html, position);
+                            // textarea.html(html);
+                            // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
+                        }
 
-                          event.preventDefault();
-                          // html = insertTab(html, position);
-                          // textarea.html(html);
-                          // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
-                      }
-                  });
+                    });
 
                     // textarea.on('click keyup focus mouseup', function() {
                     $timeout(function() {
