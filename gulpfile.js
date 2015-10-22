@@ -29,9 +29,13 @@ gulp.task('scripts', function() {
 
 // Watch Files For Changes
 gulp.task('watch', function() {
-  gulp.watch('demo/*.html', notifyLiveReload);
-  gulp.watch('src/*.js', notifyLiveReload)
-  gulp.watch('demo/css/*.css', notifyLiveReload);
+  // gulp.watch('demo/*.html', notifyLiveReload);
+  // gulp.watch('src/*.js', notifyLiveReload);
+  // gulp.watch('demo/css/*.css', notifyLiveReload);
+  var watcher = gulp.watch('src/*.js', ['scripts']);
+watcher.on('change', function(event) {
+  console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+});
 });
 
 gulp.task('express', function() {
@@ -58,6 +62,9 @@ function notifyLiveReload(event) {
     }
   });
 }
+
+
+
 
 
 // Default Task
