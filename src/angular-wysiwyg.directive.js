@@ -391,6 +391,43 @@
                     }
                 }
 
+
+                scope.insertTwitter = function() {
+                    var twitterUrl = prompt('Enter Twitter url');
+                    var sel, range;
+                    sel = window.getSelection();
+                    if (twitterUrl !== "" && twitterUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+
+                            var el = document.createElement('div');
+                            el.classList.add('twitter_embed_wrapper');
+                            el.setAttribute('data-link', twitterUrl);
+
+                            socialEmbeds.getTwitterEmbed(twitterUrl)
+                                .then(function(response) {
+
+                                    el.innerHTML = response.html;
+                                    range.insertNode(el);
+                                    el.parentNode.contentEditable = "false";
+                                    twttr.widgets.load();
+
+                                    if (el) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(el.parentNode);
+                                        range.collapse(true);
+                                        var ell = document.createElement('div');
+                                        ell.innerHTML = "<br>";
+                                        range.insertNode(ell);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
+                                });
+                        }
+                    }
+                }
+
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
