@@ -324,13 +324,35 @@
 
                           var figure = document.createElement('figure');
 
-                          var el = document.createElement('img');
-                          el.setAttribute('src', e.target.result);
+                          var figureCaption = document.createElement('figcaption');
 
-                          figure.appendChild(el);
+                          figureCaption.innerText = "Image Caption";
+                          figureCaption.addEventListener('click', function(){
+                            var caption = prompt("Enter Image Caption", this.innerText);
+                            this.innerText = caption || "image Caption";
+                            this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
+                            this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                          });
+
+                          var fiqureCredits = document.createElement('span');
+                          fiqureCredits.innerText = "Image credits";
+                          fiqureCredits.addEventListener('click', function(){
+                            var credits = prompt("Enter Image Credits", this.innerText);
+                            this.innerText = credits || "Image credits";
+                            this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                          });
+
+
+                          var image = document.createElement('img');
+                          image.setAttribute('src', e.target.result);
+
+                          figure.appendChild(image);
+                          figure.appendChild(figureCaption);
+                          figure.appendChild(fiqureCredits);
+
                           var sel, range;
-
                           sel = window.getSelection();
+
                           if (sel.getRangeAt && sel.rangeCount) {
 
                               range = sel.getRangeAt(0);
