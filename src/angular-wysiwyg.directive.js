@@ -463,6 +463,41 @@
                         }
                     }
                 }
+
+                scope.insertFacebook = function() {
+                    var sel, range;
+                    sel = window.getSelection();
+                    var facebookUrl = window.prompt("Enter facebook Url");
+
+                    if (facebookUrl !== "" && facebookUrl !== null) {
+
+                        if (sel.getRangeAt && sel.rangeCount) {
+                            range = sel.getRangeAt(0);
+                            var el = document.createElement("div");
+                            el.setAttribute('data-link', facebookUrl);
+                            el.classList.add('facebook_embed_wrapper');
+
+                            el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                            range.insertNode(el);
+                            el.parentNode.contentEditable = "false";
+
+                            $timeout(function() {
+                                window.FB.XFBML.parse();
+                                if (el) {
+                                    range = range.cloneRange();
+                                    range.setStartAfter(el.parentNode);
+                                    range.collapse(true);
+                                    var ell = document.createElement("div");
+                                    ell.innerHTML = "<br>";
+                                    range.insertNode(ell);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
+                            }, 100);
+                        }
+                    }
+                }
+
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
