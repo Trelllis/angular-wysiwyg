@@ -31,28 +31,49 @@
 
                 scope.isLink = false;
 
-                scope.fontSizes = [{
-                    value: '1',
-                    size: '10px'
-                }, {
-                    value: '2',
-                    size: '13px'
-                }, {
-                    value: '3',
-                    size: '16px'
-                }, {
-                    value: '4',
-                    size: '18px'
-                }, {
-                    value: '5',
-                    size: '24px'
-                }, {
-                    value: '6',
-                    size: '32px'
-                }, {
-                    value: '7',
-                    size: '48px'
-                }];
+                // scope.fontSizes = [{
+                //     value: '1',
+                //     size: '10px'
+                // }, {
+                //     value: '2',
+                //     size: '13px'
+                // }, {
+                //     value: '3',
+                //     size: '16px'
+                // }, {
+                //     value: '4',
+                //     size: '18px'
+                // }, {
+                //     value: '5',
+                //     size: '24px'
+                // }, {
+                //     value: '6',
+                //     size: '32px'
+                // }, {
+                //     value: '7',
+                //     size: '48px'
+                // }];
+                // scope.fontSize = scope.fontSizes[1];
+
+                // scope.fonts = [
+                //     'Georgia',
+                //     'Palatino Linotype',
+                //     'Times New Roman',
+                //     'Arial',
+                //     'Helvetica',
+                //     'Arial Black',
+                //     'Comic Sans MS',
+                //     'Impact',
+                //     'Lucida Sans Unicode',
+                //     'Tahoma',
+                //     'Trebuchet MS',
+                //     'Verdana',
+                //     'Courier New',
+                //     'Lucida Console',
+                //     'Helvetica Neue'
+                // ].sort();
+
+                // scope.font = scope.fonts[6];
 
                 scope.formatBlocks = [{
                     name: 'Heading Blocks',
@@ -78,37 +99,14 @@
                 }, ];
                 scope.formatBlock = scope.formatBlocks[0];
 
-                scope.fontSize = scope.fontSizes[1];
-
                 if (angular.isArray(scope.cssClasses)) {
                     scope.cssClasses.unshift('css');
                     scope.cssClass = scope.cssClasses[0];
                 }
 
-                scope.fonts = [
-                    'Georgia',
-                    'Palatino Linotype',
-                    'Times New Roman',
-                    'Arial',
-                    'Helvetica',
-                    'Arial Black',
-                    'Comic Sans MS',
-                    'Impact',
-                    'Lucida Sans Unicode',
-                    'Tahoma',
-                    'Trebuchet MS',
-                    'Verdana',
-                    'Courier New',
-                    'Lucida Console',
-                    'Helvetica Neue'
-                ].sort();
-
-                scope.font = scope.fonts[6];
-
                 init();
 
                 function init() {
-
                     compileMenu();
                     configureDisabledWatch();
                     configureBootstrapTitle();
@@ -179,29 +177,15 @@
                       }
                   });
 
-                  textarea.on('click keyup focus mouseup', function() {
+                    // textarea.on('click keyup focus mouseup', function() {
                     $timeout(function() {
                         scope.isBold = scope.cmdState('bold');
                         scope.isUnderlined = scope.cmdState('underline');
                         scope.isStrikethrough = scope.cmdState('strikethrough');
-                        scope.isItalic = scope.cmdState('italic');
-                        scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
-                        scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
-                        scope.isRightJustified = scope.cmdState('justifyright');
-                        scope.isLeftJustified = scope.cmdState('justifyleft');
-                        scope.isCenterJustified = scope.cmdState('justifycenter');
-                        scope.isPre = scope.cmdValue('formatblock') === 'pre';
                         scope.isBlockquote = scope.cmdValue('formatblock') === 'blockquote';
-
                         scope.isOrderedList = scope.cmdState('insertorderedlist');
                         scope.isUnorderedList = scope.cmdState('insertunorderedlist');
 
-                        scope.fonts.forEach(function(v, k) { //works but kinda crappy.
-                            if (scope.cmdValue('fontname').indexOf(v) > -1) {
-                                scope.font = v;
-                                return false;
-                            }
-                        });
                         scope.cmdValue('formatblock').toLowerCase();
                         scope.formatBlocks.forEach(function(v, k) {
                             if (scope.cmdValue('formatblock').toLowerCase() === v.value.toLowerCase()) {
@@ -210,23 +194,39 @@
                             }
                         });
 
-                        scope.fontSizes.forEach(function(v, k) {
-                            if (scope.cmdValue('fontsize') === v.value) {
-                                scope.fontSize = v;
-                                return false;
-                            }
-                        });
+                        // scope.isItalic = scope.cmdState('italic');
+                        // scope.isSuperscript = itemIs('SUP'); //scope.cmdState('superscript');
+                        // scope.isSubscript = itemIs('SUB'); //scope.cmdState('subscript');
+                        // scope.isRightJustified = scope.cmdState('justifyright');
+                        // scope.isLeftJustified = scope.cmdState('justifyleft');
+                        // scope.isCenterJustified = scope.cmdState('justifycenter');
+                        // scope.isPre = scope.cmdValue('formatblock') === 'pre';
+                        // scope.fonts.forEach(function(v, k) { //works but kinda crappy.
+                        //     if (scope.cmdValue('fontname').indexOf(v) > -1) {
+                        //         scope.font = v;
+                        //         return false;
+                        //     }
+                        // });
 
-                        scope.hiliteColor = getHiliteColor();
-                        element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
+                        // scope.fontSizes.forEach(function(v, k) {
+                        //     if (scope.cmdValue('fontsize') === v.value) {
+                        //         scope.fontSize = v;
+                        //         return false;
+                        //     }
+                        // });
 
-                        scope.fontColor = scope.cmdValue('forecolor');
-                        element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+                        // scope.hiliteColor = getHiliteColor();
+                        // element.find('button.wysiwyg-hiliteColor').css('background-color', scope.hiliteColor);
 
-                        scope.isLink = itemIs('A');
+                        // scope.fontColor = scope.cmdValue('forecolor');
+                        // element.find('button.wysiwyg-fontcolor').css('color', scope.fontColor);
+
+                        // scope.isLink = itemIs('A');
 
                     }, 0);
-                  });
+                    // });
+
+
                 }
 
                 //Used to detect things like A tags and others that dont work with cmdValue().
@@ -293,25 +293,25 @@
                         scope.format('insertimage', input);
                 };
 
-                scope.setFont = function() {
-                    scope.format('fontname', scope.font);
-                };
+                // scope.setFont = function() {
+                //     scope.format('fontname', scope.font);
+                // };
 
-                scope.setFontSize = function() {
-                    scope.format('fontsize', scope.fontSize.value);
-                };
+                // scope.setFontSize = function() {
+                //     scope.format('fontsize', scope.fontSize.value);
+                // };
 
                 scope.setFormatBlock = function() {
                     scope.format('formatBlock', scope.formatBlock.value);
                 };
 
-                scope.setFontColor = function() {
-                    scope.format('forecolor', scope.fontColor);
-                };
+                // scope.setFontColor = function() {
+                //     scope.format('forecolor', scope.fontColor);
+                // };
 
-                scope.setHiliteColor = function() {
-                    scope.format('hiliteColor', scope.hiliteColor);
-                };
+                // scope.setHiliteColor = function() {
+                //     scope.format('hiliteColor', scope.hiliteColor);
+                // };
 
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
