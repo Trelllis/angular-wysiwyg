@@ -289,6 +289,9 @@ Requires:
                     // });
 
                       var inputElement = document.getElementById("imagesInput");
+                      var root = inputElement.createShadowRoot();
+
+                      root.innerHTML = "<button tabindex='-1'>Images</button>";
                       inputElement.addEventListener("change", insertFigure, false);
 
                 }
@@ -601,7 +604,8 @@ Requires:
         ['ordered-list', 'unordered-list', 'outdent', 'indent'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['code', 'quote', 'paragraph'],
-        ['link', 'image'],
+        ['link'],
+        ['images'],
         ['instagram', 'twitter', 'youtube']
     ];
 
@@ -1159,10 +1163,6 @@ Requires:
       },{
         name: 'id',
         value: 'imagesInput'
-      }],
-      data: [{
-        tag: 'i',
-        classes: 'fa fa-picture-o'
       }]
     },
     'font-size': {

@@ -444,10 +444,6 @@
       },{
         name: 'id',
         value: 'imagesInput'
-      }],
-      data: [{
-        tag: 'i',
-        classes: 'fa fa-picture-o'
       }]
     },
     'font-size': {

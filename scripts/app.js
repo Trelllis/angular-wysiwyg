@@ -14,7 +14,8 @@ app.controller('MyCtrl', function($scope) {
         ['ordered-list', 'unordered-list'],
         ['left-justify', 'center-justify', 'right-justify'],
         ['quote'],
-        ['link', 'images'],
+        ['link'],
+        ['images'],
         ['instagram', 'twitter', 'youtube', 'facebook']
     ];
 

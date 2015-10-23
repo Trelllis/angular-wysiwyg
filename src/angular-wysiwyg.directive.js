@@ -227,6 +227,9 @@
                     // });
 
                       var inputElement = document.getElementById("imagesInput");
+                      var root = inputElement.createShadowRoot();
+
+                      root.innerHTML = "<button tabindex='-1'>Images</button>";
                       inputElement.addEventListener("change", insertFigure, false);
 
                 }
