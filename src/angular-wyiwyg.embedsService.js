@@ -4,6 +4,7 @@
   angular.module('wysiwyg.module')
     .factory('socialEmbeds', socialEmbeds);
 
+  socialEmbeds.$inject = ['$http'];
   function socialEmbeds($http){
     return{
       getInstagramEmbed: getInstagramEmbed,

@@ -37,6 +37,7 @@ Requires:
   angular.module('wysiwyg.module')
     .factory('socialEmbeds', socialEmbeds);
 
+  socialEmbeds.$inject = ['$http'];
   function socialEmbeds($http){
     return{
       getInstagramEmbed: getInstagramEmbed,
@@ -63,7 +64,10 @@ Requires:
 (function() {
     'use strict';
     angular.module('wysiwyg.module')
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile, socialEmbeds) {
+        .directive('wysiwyg', wysiwyg );
+
+        wysiwyg.$inject = ['$timeout', 'wysiwgGui', '$compile', 'socialEmbeds']
+        function wysiwyg($timeout, wysiwgGui, $compile, socialEmbeds) {
             return {
                 template: '<div>' +
                     '<div class="wysiwyg-menu"></div>' +
@@ -588,7 +592,7 @@ Requires:
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
-        });
+        };
 })();
 
 (function() {
@@ -610,7 +614,10 @@ Requires:
     ];
 
   angular.module('wysiwyg.module')
-  .factory('wysiwgGui', function(wysiwgGuiElements) {
+  .factory('wysiwgGui', wysiwgGui);
+
+  wysiwgGui.$inject = ['wysiwgGuiElements']
+  function wysiwgGui(wysiwgGuiElements) {
 
     var ELEMENTS = wysiwgGuiElements;
     var custom = {};
@@ -714,7 +721,7 @@ Requires:
           setCustomElements: setCustomElements
         };
 
-      });
+      };
 })();
 
 (function() {

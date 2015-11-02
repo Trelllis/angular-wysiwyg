@@ -17,7 +17,10 @@
     ];
 
   angular.module('wysiwyg.module')
-  .factory('wysiwgGui', function(wysiwgGuiElements) {
+  .factory('wysiwgGui', wysiwgGui);
+
+  wysiwgGui.$inject = ['wysiwgGuiElements']
+  function wysiwgGui(wysiwgGuiElements) {
 
     var ELEMENTS = wysiwgGuiElements;
     var custom = {};
@@ -121,5 +124,5 @@
           setCustomElements: setCustomElements
         };
 
-      });
+      };
 })();

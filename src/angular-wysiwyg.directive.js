@@ -1,7 +1,10 @@
 (function() {
     'use strict';
     angular.module('wysiwyg.module')
-        .directive('wysiwyg', function($timeout, wysiwgGui, $compile, socialEmbeds) {
+        .directive('wysiwyg', wysiwyg );
+
+        wysiwyg.$inject = ['$timeout', 'wysiwgGui', '$compile', 'socialEmbeds']
+        function wysiwyg($timeout, wysiwgGui, $compile, socialEmbeds) {
             return {
                 template: '<div>' +
                     '<div class="wysiwyg-menu"></div>' +
@@ -526,5 +529,5 @@
                 scope.format('enableobjectresizing', true);
                 scope.format('styleWithCSS', true);
             }
-        });
+        };
 })();
