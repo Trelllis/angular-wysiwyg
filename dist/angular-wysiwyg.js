@@ -502,7 +502,6 @@ Requires:
                                     el.innerHTML = response.html;
                                     range.insertNode(el);
                                     el.parentNode.contentEditable = "false";
-                                    twttr.widgets.load();
 
                                     if (el) {
                                         range = range.cloneRange();
