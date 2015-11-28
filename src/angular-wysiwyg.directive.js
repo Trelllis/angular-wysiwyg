@@ -387,7 +387,9 @@
                     var sel, range;
 
                     sel = window.getSelection();
-                    if (instagramUrl !== "" && instagramUrl !== null) {
+
+                    if(instagramUrl !== "" && instagramUrl !== null && instagramUrl.indexOf('instagram') !== -1 ){
+
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -416,6 +418,12 @@
                                     }
                                 });
                         }
+                    } else {
+                        if(instagramUrl !== "" && instagramUrl !== null){
+                            window.alert('Please enter a valid instagram url');
+                            scope.insertInstagram();
+                        }
+
                     }
                 }
 
@@ -424,7 +432,8 @@
                     var twitterUrl = prompt('Enter Twitter url');
                     var sel, range;
                     sel = window.getSelection();
-                    if (twitterUrl !== "" && twitterUrl !== null) {
+                    if (twitterUrl !== "" && twitterUrl !== null && twitterUrl.indexOf('twitter') !== -1) {
+
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -452,6 +461,11 @@
                                     }
                                 });
                         }
+                    } else {
+                        if (twitterUrl !== "" && twitterUrl !== null) {
+                            window.alert('Please enter a valid Twitter url');
+                            scope.insertTwitter();
+                        }
                     }
                 }
 
@@ -461,7 +475,8 @@
 
                     sel = window.getSelection();
 
-                    if (youtubeUrl !== "" && youtubeUrl !== null) {
+                    if (youtubeUrl !== "" && youtubeUrl !== null && youtubeUrl.indexOf('youtube') !== -1) {
+
 
                         var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
 
@@ -474,6 +489,7 @@
                             el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
                             range.insertNode(el);
                             el.parentNode.contentEditable = "false";
+
 
                             $timeout(function() {
                                 if (el) {
@@ -488,6 +504,11 @@
                                 }
                             }, 500);
                         }
+                    } else {
+                        if (youtubeUrl !== "" && youtubeUrl !== null) {
+                            window.alert('Please enter a valid Youtube url');
+                            scope.insertYoutube();
+                        }
                     }
                 }
 
@@ -496,7 +517,8 @@
                     sel = window.getSelection();
                     var facebookUrl = window.prompt("Enter facebook Url");
 
-                    if (facebookUrl !== "" && facebookUrl !== null) {
+                    if (facebookUrl !== "" && facebookUrl !== null && facebookUrl.indexOf('facebook') !== -1) {
+
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -521,6 +543,11 @@
                                     sel.addRange(range);
                                 }
                             }, 100);
+                        }
+                    } else {
+                        if (facebookUrl !== "" && facebookUrl !== null) {
+                            window.alert('Please enter a valid Facebook url');
+                            scope.insertFacebook();
                         }
                     }
                 }
