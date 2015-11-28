@@ -383,13 +383,14 @@
 
 
                 scope.insertInstagram = function() {
-                    var instagramUrl = prompt('Enter instagram url');
+                    var instagramUrl = prompt('Enter Instagram url');
                     var sel, range;
 
                     sel = window.getSelection();
 
                     if(instagramUrl !== "" && instagramUrl !== null && instagramUrl.indexOf('instagram') !== -1 ){
 
+                        scope.$emit('embed-instagram:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -405,6 +406,8 @@
                                     range.insertNode(el);
                                     el.parentNode.contentEditable = "false";
                                     instgrm.Embeds.process();
+
+                                    scope.$emit('embed-instagram:finish');
 
                                     if (el) {
                                         range = range.cloneRange();
@@ -434,6 +437,7 @@
                     sel = window.getSelection();
                     if (twitterUrl !== "" && twitterUrl !== null && twitterUrl.indexOf('twitter') !== -1) {
 
+                        scope.$emit('embed-twitter:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -448,6 +452,7 @@
                                     el.innerHTML = response.html;
                                     range.insertNode(el);
                                     el.parentNode.contentEditable = "false";
+                                    scope.$emit('embed-twitter:finish');
 
                                     if (el) {
                                         range = range.cloneRange();
@@ -477,6 +482,7 @@
 
                     if (youtubeUrl !== "" && youtubeUrl !== null && youtubeUrl.indexOf('youtube') !== -1) {
 
+                        scope.$emit('embed-youtube:start');
 
                         var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
 
@@ -490,6 +496,7 @@
                             range.insertNode(el);
                             el.parentNode.contentEditable = "false";
 
+                            scope.$emit('embed-youtube:finish');
 
                             $timeout(function() {
                                 if (el) {
@@ -519,6 +526,7 @@
 
                     if (facebookUrl !== "" && facebookUrl !== null && facebookUrl.indexOf('facebook') !== -1) {
 
+                        scope.$emit('embed-facebook:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -532,6 +540,7 @@
 
                             $timeout(function() {
                                 window.FB.XFBML.parse();
+                                scope.$emit('embed-facebook:finish');
                                 if (el) {
                                     range = range.cloneRange();
                                     range.setStartAfter(el.parentNode);
