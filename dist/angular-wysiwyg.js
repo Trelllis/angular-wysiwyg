@@ -446,11 +446,14 @@ Requires:
 
 
                 scope.insertInstagram = function() {
-                    var instagramUrl = prompt('Enter instagram url');
+                    var instagramUrl = prompt('Enter Instagram url');
                     var sel, range;
 
                     sel = window.getSelection();
-                    if (instagramUrl !== "" && instagramUrl !== null) {
+
+                    if(instagramUrl !== "" && instagramUrl !== null && instagramUrl.indexOf('instagram') !== -1 ){
+
+                        scope.$emit('embed-instagram:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -467,6 +470,8 @@ Requires:
                                     el.parentNode.contentEditable = "false";
                                     instgrm.Embeds.process();
 
+                                    scope.$emit('embed-instagram:finish');
+
                                     if (el) {
                                         range = range.cloneRange();
                                         range.setStartAfter(el.parentNode);
@@ -479,6 +484,12 @@ Requires:
                                     }
                                 });
                         }
+                    } else {
+                        if(instagramUrl !== "" && instagramUrl !== null){
+                            window.alert('Please enter a valid instagram url');
+                            scope.insertInstagram();
+                        }
+
                     }
                 }
 
@@ -487,7 +498,9 @@ Requires:
                     var twitterUrl = prompt('Enter Twitter url');
                     var sel, range;
                     sel = window.getSelection();
-                    if (twitterUrl !== "" && twitterUrl !== null) {
+                    if (twitterUrl !== "" && twitterUrl !== null && twitterUrl.indexOf('twitter') !== -1) {
+
+                        scope.$emit('embed-twitter:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -502,6 +515,7 @@ Requires:
                                     el.innerHTML = response.html;
                                     range.insertNode(el);
                                     el.parentNode.contentEditable = "false";
+                                    scope.$emit('embed-twitter:finish');
 
                                     if (el) {
                                         range = range.cloneRange();
@@ -515,6 +529,11 @@ Requires:
                                     }
                                 });
                         }
+                    } else {
+                        if (twitterUrl !== "" && twitterUrl !== null) {
+                            window.alert('Please enter a valid Twitter url');
+                            scope.insertTwitter();
+                        }
                     }
                 }
 
@@ -524,7 +543,9 @@ Requires:
 
                     sel = window.getSelection();
 
-                    if (youtubeUrl !== "" && youtubeUrl !== null) {
+                    if (youtubeUrl !== "" && youtubeUrl !== null && youtubeUrl.indexOf('youtube') !== -1) {
+
+                        scope.$emit('embed-youtube:start');
 
                         var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
 
@@ -537,6 +558,8 @@ Requires:
                             el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
                             range.insertNode(el);
                             el.parentNode.contentEditable = "false";
+
+                            scope.$emit('embed-youtube:finish');
 
                             $timeout(function() {
                                 if (el) {
@@ -551,6 +574,11 @@ Requires:
                                 }
                             }, 500);
                         }
+                    } else {
+                        if (youtubeUrl !== "" && youtubeUrl !== null) {
+                            window.alert('Please enter a valid Youtube url');
+                            scope.insertYoutube();
+                        }
                     }
                 }
 
@@ -559,7 +587,9 @@ Requires:
                     sel = window.getSelection();
                     var facebookUrl = window.prompt("Enter facebook Url");
 
-                    if (facebookUrl !== "" && facebookUrl !== null) {
+                    if (facebookUrl !== "" && facebookUrl !== null && facebookUrl.indexOf('facebook') !== -1) {
+
+                        scope.$emit('embed-facebook:start');
 
                         if (sel.getRangeAt && sel.rangeCount) {
                             range = sel.getRangeAt(0);
@@ -573,6 +603,7 @@ Requires:
 
                             $timeout(function() {
                                 window.FB.XFBML.parse();
+                                scope.$emit('embed-facebook:finish');
                                 if (el) {
                                     range = range.cloneRange();
                                     range.setStartAfter(el.parentNode);
@@ -584,6 +615,11 @@ Requires:
                                     sel.addRange(range);
                                 }
                             }, 100);
+                        }
+                    } else {
+                        if (facebookUrl !== "" && facebookUrl !== null) {
+                            window.alert('Please enter a valid Facebook url');
+                            scope.insertFacebook();
                         }
                     }
                 }
