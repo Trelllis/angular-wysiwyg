@@ -24,4 +24,4 @@ app.controller('MyCtrl', function($scope) {
     $scope.setDisabled = function() {
         $scope.disabled = !$scope.disabled;
     }
-})
+});

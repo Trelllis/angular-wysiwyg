@@ -445,187 +445,245 @@ Requires:
               }
 
 
-                scope.insertInstagram = function() {
-                    var instagramUrl = prompt('Enter Instagram url');
-                    var sel, range;
+            scope.insertInstagram = function() {
 
-                    sel = window.getSelection();
+                var sel, range;
+                sel = window.getSelection();
 
-                    if(instagramUrl !== "" && instagramUrl !== null && instagramUrl.indexOf('instagram') !== -1 ){
+                range = sel.getRangeAt(0);
 
-                        scope.$emit('embed-instagram:start');
+                swal({   title: "Instagram Embed",
+                    text: "Enter an Instagram URL:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "Instagram Url",
+                    showLoaderOnConfirm: true
+                }, function(instagramUrl){
 
-                        if (sel.getRangeAt && sel.rangeCount) {
-                            range = sel.getRangeAt(0);
 
-                            var el = document.createElement('div');
-                            el.classList.add('instagram_embed_wrapper');
-                            el.setAttribute('data-link', instagramUrl);
+                    if (instagramUrl === false ) return false;
 
-                            socialEmbeds.getInstagramEmbed(instagramUrl)
-                                .then(function(response) {
 
-                                    el.innerHTML = response.html;
-                                    range.insertNode(el);
-                                    el.parentNode.contentEditable = "false";
-                                    instgrm.Embeds.process();
-
-                                    scope.$emit('embed-instagram:finish');
-
-                                    if (el) {
-                                        range = range.cloneRange();
-                                        range.setStartAfter(el.parentNode);
-                                        range.collapse(true);
-                                        var ell = document.createElement('div');
-                                        ell.innerHTML = "<br>";
-                                        range.insertNode(ell);
-                                        sel.removeAllRanges();
-                                        sel.addRange(range);
-                                    }
-                                });
-                        }
-                    } else {
-                        if(instagramUrl !== "" && instagramUrl !== null){
-                            window.alert('Please enter a valid instagram url');
-                            scope.insertInstagram();
-                        }
-
+                    if(instagramUrl === '' || instagramUrl === null || instagramUrl.indexOf('instagram') === -1 ){
+                        swal.showInputError('Enter a valid Instagram Url');
+                        return false;
                     }
-                }
 
+                    scope.$emit('embed-instagram:start');
 
-                scope.insertTwitter = function() {
-                    var twitterUrl = prompt('Enter Twitter url');
-                    var sel, range;
-                    sel = window.getSelection();
-                    if (twitterUrl !== "" && twitterUrl !== null && twitterUrl.indexOf('twitter') !== -1) {
+                    var el = document.createElement('div');
+                    el.classList.add('instagram_embed_wrapper');
+                    el.setAttribute('data-link', instagramUrl);
 
-                        scope.$emit('embed-twitter:start');
+                    socialEmbeds.getInstagramEmbed(instagramUrl)
+                        .then(function(response) {
 
-                        if (sel.getRangeAt && sel.rangeCount) {
-                            range = sel.getRangeAt(0);
-
-                            var el = document.createElement('div');
-                            el.classList.add('twitter_embed_wrapper');
-                            el.setAttribute('data-link', twitterUrl);
-
-                            socialEmbeds.getTwitterEmbed(twitterUrl)
-                                .then(function(response) {
-
-                                    el.innerHTML = response.html;
-                                    range.insertNode(el);
-                                    el.parentNode.contentEditable = "false";
-                                    scope.$emit('embed-twitter:finish');
-
-                                    if (el) {
-                                        range = range.cloneRange();
-                                        range.setStartAfter(el.parentNode);
-                                        range.collapse(true);
-                                        var ell = document.createElement('div');
-                                        ell.innerHTML = "<br>";
-                                        range.insertNode(ell);
-                                        sel.removeAllRanges();
-                                        sel.addRange(range);
-                                    }
-                                });
-                        }
-                    } else {
-                        if (twitterUrl !== "" && twitterUrl !== null) {
-                            window.alert('Please enter a valid Twitter url');
-                            scope.insertTwitter();
-                        }
-                    }
-                }
-
-                scope.insertYoutube = function() {
-                    var youtubeUrl = window.prompt("Enter Youtube Url");
-                    var sel, range;
-
-                    sel = window.getSelection();
-
-                    if (youtubeUrl !== "" && youtubeUrl !== null && youtubeUrl.indexOf('youtube') !== -1) {
-
-                        scope.$emit('embed-youtube:start');
-
-                        var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
-
-                        if (sel.getRangeAt && sel.rangeCount) {
-                            range = sel.getRangeAt(0);
-                            var el = document.createElement("div");
-                            el.setAttribute('data-link', 'https://www.youtube.com/embed/' + guid[0].substring(3));
-                            el.classList.add('youtube_player_wrapper');
-
-                            el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
+                            el.innerHTML = response.html;
                             range.insertNode(el);
-                            el.parentNode.contentEditable = "false";
 
-                            scope.$emit('embed-youtube:finish');
+                            if (el.parentNode.getAttribute('id') === "question") {
+                               el.contentEditable = false;
+                            } else {
+                                el.parentNode.contentEditable = "false";
+                            }
 
-                            $timeout(function() {
-                                if (el) {
-                                    range = range.cloneRange();
-                                    range.setStartAfter(el.parentNode);
-                                    range.collapse(true);
-                                    var ell = document.createElement('div');
-                                    ell.innerHTML = "<br>";
-                                    range.insertNode(ell);
-                                    sel.removeAllRanges();
-                                    sel.addRange(range);
-                                }
-                            }, 500);
-                        }
-                    } else {
-                        if (youtubeUrl !== "" && youtubeUrl !== null) {
-                            window.alert('Please enter a valid Youtube url');
-                            scope.insertYoutube();
-                        }
+                            instgrm.Embeds.process();
+
+                            if (el) {
+                                range = range.cloneRange();
+                                range.setStartAfter(el.parentNode);
+                                range.collapse(true);
+                                var ell = document.createElement('div');
+                                ell.innerHTML = "<br>";
+                                range.insertNode(ell);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+
+                            swal.close();
+                            scope.$emit('embed-instagram:finish');
+                        });
+                });
+            }
+
+
+            scope.insertTwitter = function() {
+
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+
+                swal({   title: "Twitter Embed",
+                    text: "Enter a Tweet URL:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "Tweet Url",
+                    showLoaderOnConfirm: true
+                }, function(twitterUrl){
+
+                    if (twitterUrl === false) return false;
+
+                    if(twitterUrl === '' || twitterUrl === null || twitterUrl.indexOf('twitter') === -1 ){
+                        swal.showInputError('Enter a valid twitter Url');
+                        return false;
                     }
-                }
 
-                scope.insertFacebook = function() {
-                    var sel, range;
-                    sel = window.getSelection();
-                    var facebookUrl = window.prompt("Enter facebook Url");
+                    scope.$emit('embed-twitter:start');
 
-                    if (facebookUrl !== "" && facebookUrl !== null && facebookUrl.indexOf('facebook') !== -1) {
+                    var el = document.createElement('div');
+                    el.classList.add('twitter_embed_wrapper');
+                    el.setAttribute('data-link', twitterUrl);
 
-                        scope.$emit('embed-facebook:start');
+                    socialEmbeds.getTwitterEmbed(twitterUrl)
+                        .then(function(response) {
 
-                        if (sel.getRangeAt && sel.rangeCount) {
-                            range = sel.getRangeAt(0);
-                            var el = document.createElement("div");
-                            el.setAttribute('data-link', facebookUrl);
-                            el.classList.add('facebook_embed_wrapper');
-
-                            el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                            el.innerHTML = response.html;
                             range.insertNode(el);
-                            el.parentNode.contentEditable = "false";
 
-                            $timeout(function() {
-                                window.FB.XFBML.parse();
-                                scope.$emit('embed-facebook:finish');
-                                if (el) {
-                                    range = range.cloneRange();
-                                    range.setStartAfter(el.parentNode);
-                                    range.collapse(true);
-                                    var ell = document.createElement("div");
-                                    ell.innerHTML = "<br>";
-                                    range.insertNode(ell);
-                                    sel.removeAllRanges();
-                                    sel.addRange(range);
-                                }
-                            }, 100);
-                        }
-                    } else {
-                        if (facebookUrl !== "" && facebookUrl !== null) {
-                            window.alert('Please enter a valid Facebook url');
-                            scope.insertFacebook();
-                        }
+                            if (el.parentNode.getAttribute('id') === "question") {
+                               el.contentEditable = false;
+                            } else {
+                                el.parentNode.contentEditable = "false";
+                            }
+
+                            if (el) {
+                                range = range.cloneRange();
+                                range.setStartAfter(el.parentNode);
+                                range.collapse(true);
+                                var ell = document.createElement('div');
+                                ell.innerHTML = "<br>";
+                                range.insertNode(ell);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+
+                            swal.close();
+                            scope.$emit('embed-twitter:finish');
+                        });
+                });
+            }
+
+            scope.insertYoutube = function() {
+
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+
+                swal({   title: "Youtube Embed",
+                    text: "Enter a Youtube URL:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "Youtube Url",
+                    showLoaderOnConfirm: true
+                }, function(youtubeUrl){
+
+                    if (youtubeUrl === false) return false;
+
+                    if (youtubeUrl === "" && youtubeUrl === null && youtubeUrl.indexOf('youtube') === -1) {
+                        swal.showInputError('Enter a valid twitter Url');
+                        return false;
                     }
-                }
 
-                scope.format('enableobjectresizing', true);
-                scope.format('styleWithCSS', true);
+                    scope.$emit('embed-youtube:start');
+
+                    var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
+
+                    var el = document.createElement("div");
+                    el.setAttribute('data-link', 'https://www.youtube.com/embed/' + guid[0].substring(3));
+                    el.classList.add('youtube_player_wrapper');
+
+                    el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
+                    range.insertNode(el);
+
+                    if (el.parentNode.getAttribute('id') === "question") {
+                       el.contentEditable = false;
+                    } else {
+                        el.parentNode.contentEditable = "false";
+                    }
+
+                    $timeout(function() {
+                        if (el) {
+                            range = range.cloneRange();
+                            range.setStartAfter(el.parentNode);
+                            range.collapse(true);
+                            var ell = document.createElement('div');
+                            ell.innerHTML = "<br>";
+                            range.insertNode(ell);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+                    }, 500);
+
+                    swal.close();
+                    scope.$emit('embed-youtube:finish');
+                });
+            }
+
+            scope.insertFacebook = function() {
+
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+
+                swal({   title: "Facebook Embed",
+                    text: "Enter a Facebook URL:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "Facebook Url",
+                    showLoaderOnConfirm: true
+                }, function(facebookUrl){
+
+                    if (facebookUrl === false) return false;
+
+                    if (facebookUrl === "" && facebookUrl === null && facebookUrl.indexOf('facebook') === -1) {
+                        swal.showInputError('Enter a valid twitter Url');
+                        return false;
+                    }
+
+                    scope.$emit('embed-facebook:start');
+
+                    var el = document.createElement("div");
+                    el.setAttribute('data-link', facebookUrl);
+                    el.classList.add('facebook_embed_wrapper');
+
+                    el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                    range.insertNode(el);
+
+                    if (el.parentNode.getAttribute('id') === "question") {
+                       el.contentEditable = false;
+                    } else {
+                        el.parentNode.contentEditable = "false";
+                    }
+
+                    $timeout(function() {
+                        window.FB.XFBML.parse();
+                        if (el) {
+                            range = range.cloneRange();
+                            range.setStartAfter(el.parentNode);
+                            range.collapse(true);
+                            var ell = document.createElement("div");
+                            ell.innerHTML = "<br>";
+                            range.insertNode(ell);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+
+                        swal.close();
+                        scope.$emit('embed-facebook:finish');
+                    }, 100);
+                });
+            }
+
+            scope.format('enableobjectresizing', true);
+            scope.format('styleWithCSS', true);
             }
         };
 })();
