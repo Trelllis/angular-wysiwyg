@@ -2,7 +2,6 @@
   "author": "Terry Moore II",
   "name": "angular-wysiwyg",
   "description": "Angular WYSIWYG",
-  "version": "2.0.1",
   "homepage": "https://github.com/TerryMooreII/angular-wysiwyg",
   "main": "./dist/angular-wysiwyg.min.js",
   "dependencies": {
