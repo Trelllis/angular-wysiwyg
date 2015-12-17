@@ -489,10 +489,12 @@
       }, {
         name: 'ng-click',
         value: 'createLink()'
-      }, {
-        name: 'ng-show',
-        value: '!isLink'
-      }, {
+      },
+      // {
+      //   name: 'ng-show',
+      //   value: '!isLink'
+      // },
+      {
         name: 'type',
         value: 'button'
       }],
@@ -510,10 +512,12 @@
       }, {
         name: 'ng-click',
         value: 'format(\'unlink\')'
-      }, {
-        name: 'ng-show',
-        value: 'isLink'
-      }, {
+      },
+      //  {
+      //   name: 'ng-show',
+      //   value: 'isLink'
+      // },
+      {
         name: 'type',
         value: 'button'
       }],
@@ -521,8 +525,7 @@
         tag: 'i',
         classes: 'fa fa-unlink'
       }]
-    }
-    ,
+    },
     'instagram': {
       tag: 'button',
       classes: 'btn btn-default',
