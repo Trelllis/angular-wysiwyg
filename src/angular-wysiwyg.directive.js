@@ -168,7 +168,6 @@
                 });
 
                 textarea.on('paste', 'div', function(event) {
-
                     $timeout(function() {
                         var sel, range;
                         sel = window.getSelection();
@@ -177,7 +176,6 @@
                         normalize(event.currentTarget, range);
                         event.currentTarget.innerHTML = '';
                     }, 200);
-
                 });
 
                 textarea.on('keydown', function(event) {
@@ -295,8 +293,6 @@
                 document.execCommand(cmd, false, arg);
             };
 
-
-
             scope.cmdState = function(cmd) {
                 return document.queryCommandState(cmd);
             };
@@ -379,7 +375,12 @@
 
                             range = sel.getRangeAt(0);
                             range.insertNode(figure);
-                            figure.parentNode.contentEditable = "false";
+
+                            if (figure.parentNode.getAttribute('id') === "question") {
+                                figure.contentEditable = false;
+                            } else {
+                                figure.parentNode.contentEditable = "false";
+                            }
 
                             if (figure) {
                                 range = range.cloneRange();

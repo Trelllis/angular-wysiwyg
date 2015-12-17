@@ -65,7 +65,9 @@ app.controller('MyCtrl', function($scope) {
       var div_array = Array.prototype.slice.call(t);
       div_array.forEach(function(element, index, array){
         var el = element.outerHTML || element.textContent;
-          z.push(el);
+        if (el !== '<div></div>') {
+            z.push(el);
+          }
       });
 
       console.log(z);

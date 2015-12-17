@@ -231,7 +231,6 @@ Requires:
                 });
 
                 textarea.on('paste', 'div', function(event) {
-
                     $timeout(function() {
                         var sel, range;
                         sel = window.getSelection();
@@ -240,7 +239,6 @@ Requires:
                         normalize(event.currentTarget, range);
                         event.currentTarget.innerHTML = '';
                     }, 200);
-
                 });
 
                 textarea.on('keydown', function(event) {
@@ -358,8 +356,6 @@ Requires:
                 document.execCommand(cmd, false, arg);
             };
 
-
-
             scope.cmdState = function(cmd) {
                 return document.queryCommandState(cmd);
             };
@@ -442,7 +438,12 @@ Requires:
 
                             range = sel.getRangeAt(0);
                             range.insertNode(figure);
-                            figure.parentNode.contentEditable = "false";
+
+                            if (figure.parentNode.getAttribute('id') === "question") {
+                                figure.contentEditable = false;
+                            } else {
+                                figure.parentNode.contentEditable = "false";
+                            }
 
                             if (figure) {
                                 range = range.cloneRange();
@@ -1341,10 +1342,12 @@ Requires:
       }, {
         name: 'ng-click',
         value: 'createLink()'
-      }, {
-        name: 'ng-show',
-        value: '!isLink'
-      }, {
+      },
+      // {
+      //   name: 'ng-show',
+      //   value: '!isLink'
+      // },
+      {
         name: 'type',
         value: 'button'
       }],
@@ -1362,10 +1365,12 @@ Requires:
       }, {
         name: 'ng-click',
         value: 'format(\'unlink\')'
-      }, {
-        name: 'ng-show',
-        value: 'isLink'
-      }, {
+      },
+      //  {
+      //   name: 'ng-show',
+      //   value: 'isLink'
+      // },
+      {
         name: 'type',
         value: 'button'
       }],
@@ -1373,8 +1378,7 @@ Requires:
         tag: 'i',
         classes: 'fa fa-unlink'
       }]
-    }
-    ,
+    },
     'instagram': {
       tag: 'button',
       classes: 'btn btn-default',
