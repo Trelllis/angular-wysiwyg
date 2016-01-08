@@ -403,58 +403,62 @@ Requires:
 
                     reader.onload = function(e) {
 
-                        var figure = document.createElement('figure');
-
-                        var figureCaption = document.createElement('figcaption');
-
-                        figureCaption.innerText = "Image Caption";
-                        figureCaption.addEventListener('click', function() {
-                            var caption = prompt("Enter Image Caption", this.innerText);
-                            this.innerText = caption || "image Caption";
-                            this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
-                            this.parentNode.firstChild.setAttribute('alt', this.innerText);
-                        });
-
-                        var fiqureCredits = document.createElement('span');
-                        fiqureCredits.innerText = "Image credits";
-                        fiqureCredits.addEventListener('click', function() {
-                            var credits = prompt("Enter Image Credits", this.innerText);
-                            this.innerText = credits || "Image credits";
-                            this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
-                        });
-
-
                         var image = document.createElement('img');
                         image.setAttribute('src', e.target.result);
 
-                        figure.appendChild(image);
-                        figure.appendChild(figureCaption);
-                        figure.appendChild(fiqureCredits);
+                        if(image.naturalWidth > 500 ) {
 
-                        var sel, range;
-                        sel = window.getSelection();
+                            var figure = document.createElement('figure');
 
-                        if (sel.getRangeAt && sel.rangeCount) {
+                            var figureCaption = document.createElement('figcaption');
 
-                            range = sel.getRangeAt(0);
-                            range.insertNode(figure);
+                            figureCaption.innerText = "Image Caption";
+                            figureCaption.addEventListener('click', function() {
+                                var caption = prompt("Enter Image Caption", this.innerText);
+                                this.innerText = caption || "image Caption";
+                                this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
+                                this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                            });
 
-                            if (figure.parentNode.getAttribute('id') === "question") {
-                                figure.contentEditable = false;
-                            } else {
-                                figure.parentNode.contentEditable = "false";
+                            var fiqureCredits = document.createElement('span');
+                            fiqureCredits.innerText = "Image credits";
+                            fiqureCredits.addEventListener('click', function() {
+                                var credits = prompt("Enter Image Credits", this.innerText);
+                                this.innerText = credits || "Image credits";
+                                this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                            });
+
+                            figure.appendChild(image);
+                            figure.appendChild(figureCaption);
+                            figure.appendChild(fiqureCredits);
+
+                            var sel, range;
+                            sel = window.getSelection();
+
+                            if (sel.getRangeAt && sel.rangeCount) {
+
+                                range = sel.getRangeAt(0);
+                                range.insertNode(figure);
+
+                                if (figure.parentNode.getAttribute('id') === "question") {
+                                    figure.contentEditable = false;
+                                } else {
+                                    figure.parentNode.contentEditable = "false";
+                                }
+
+                                if (figure) {
+                                    range = range.cloneRange();
+                                    range.setStartAfter(figure.parentNode);
+                                    range.collapse(true);
+                                    var ell = document.createElement('div');
+                                    ell.innerHTML = "<br>";
+                                    range.insertNode(ell);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
                             }
-
-                            if (figure) {
-                                range = range.cloneRange();
-                                range.setStartAfter(figure.parentNode);
-                                range.collapse(true);
-                                var ell = document.createElement('div');
-                                ell.innerHTML = "<br>";
-                                range.insertNode(ell);
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
+                        } else {
+                            scope.$emit('editor-error', {error: 'Image should be at least 500px wide'});
                         }
                     }
                     reader.readAsDataURL(this.files[0]);
