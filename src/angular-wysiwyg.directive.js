@@ -192,8 +192,8 @@
                     }
                 });
 
-                // textarea.on('click keyup focus mouseup', function() {
-                $timeout(function() {
+                textarea.on('click keyup focus mouseup', function() {
+                // $timeout(function() {
                     scope.isBold = scope.cmdState('bold');
                     scope.isUnderlined = scope.cmdState('underline');
                     scope.isStrikethrough = scope.cmdState('strikethrough');
@@ -238,15 +238,14 @@
 
                     // scope.isLink = itemIs('A');
 
-                }, 0);
-                // });
+                // }, 0);
+                });
 
                 var inputElement = document.getElementById("imagesInput");
                 var root = inputElement.createShadowRoot();
 
                 root.innerHTML = "<button tabindex='-1'>Images</button>";
                 inputElement.addEventListener("change", insertFigure, false);
-
             }
 
             //Used to detect things like A tags and others that dont work with cmdValue().
@@ -589,7 +588,7 @@
                 range = sel.getRangeAt(0);
 
                 swal({
-                    title: "Facebook Embed",
+                    title: "Facebook Post Embed",
                     text: "Enter a Facebook URL:",
                     type: "input",
                     showCancelButton: true,
@@ -613,6 +612,64 @@
                     el.classList.add('facebook_embed_wrapper');
 
                     el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                    range.insertNode(el);
+
+                    if (el.parentNode.getAttribute('id') === "question") {
+                        el.contentEditable = false;
+                    } else {
+                        el.parentNode.contentEditable = "false";
+                    }
+
+                    $timeout(function() {
+                        window.FB.XFBML.parse();
+                        if (el) {
+                            range = range.cloneRange();
+                            range.setStartAfter(el.parentNode);
+                            range.collapse(true);
+                            var ell = document.createElement("div");
+                            ell.innerHTML = "<br>";
+                            range.insertNode(ell);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+
+                        swal.close();
+                        scope.$emit('embed-facebook:finish');
+                    }, 100);
+                });
+            }
+
+            scope.insertFacebookVideo = function() {
+
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+
+                swal({
+                    title: "Facebook Video Embed",
+                    text: "Enter a Facebook URL:",
+                    type: "input",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    inputPlaceholder: "Facebook Url",
+                    showLoaderOnConfirm: true
+                }, function(facebookUrl) {
+
+                    if (facebookUrl === false) return false;
+
+                    if (facebookUrl === "" && facebookUrl === null && facebookUrl.indexOf('facebook') === -1) {
+                        swal.showInputError('Enter a valid twitter Url');
+                        return false;
+                    }
+
+                    scope.$emit('embed-facebook:start');
+
+                    var el = document.createElement("div");
+                    el.setAttribute('data-link', facebookUrl);
+                    el.classList.add('facebook_embed_wrapper');
+
+                    el.innerHTML = '<div class="fb-video" data-href="' + facebookUrl + '" data-allowfullscreen="true" data-width="600"></div>';
                     range.insertNode(el);
 
                     if (el.parentNode.getAttribute('id') === "question") {

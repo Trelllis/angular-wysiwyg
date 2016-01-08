@@ -585,7 +585,7 @@
       classes: 'btn btn-default',
       attributes: [{
         name: 'title',
-        value: 'Facebook'
+        value: 'Facebook Post'
       }, {
           name: 'ng-click',
           value: 'insertFacebook()'
@@ -596,6 +596,24 @@
       data: [{
         tag: 'i',
         classes: 'fa fa-facebook'
+      }]
+    },
+    'facebook-video': {
+      tag: 'button',
+      classes: 'btn btn-default',
+      attributes: [{
+        name: 'title',
+        value: 'Facebook Video'
+      }, {
+          name: 'ng-click',
+          value: 'insertFacebookVideo()'
+        }, {
+          name: 'type',
+          value: 'button'
+        }],
+      data: [{
+        tag: 'i',
+        classes: 'fa fa-video-camera'
       }]
     }
   });

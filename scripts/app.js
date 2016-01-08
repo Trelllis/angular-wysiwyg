@@ -2,7 +2,7 @@ var app = angular.module('app', ['colorpicker.module', 'wysiwyg.module'])
 
 app.controller('MyCtrl', function($scope) {
     $scope.data = {
-        text: "hello"
+
     }
 
     $scope.disabled = false;
@@ -16,7 +16,7 @@ app.controller('MyCtrl', function($scope) {
         ['quote'],
         ['link'],
         ['images'],
-        ['instagram', 'twitter', 'youtube', 'facebook']
+        ['instagram', 'twitter', 'youtube', 'facebook', 'facebook-video']
     ];
 
 
@@ -56,6 +56,10 @@ app.controller('MyCtrl', function($scope) {
       console.log('facebook finish')
     });
 
+    $scope.$on('editor-error', function(event, error){
+      console.log(event);
+      console.log(error);
+    });
 
     $scope.sendData = function () {
       console.log($scope.data.text);
