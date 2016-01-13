@@ -414,17 +414,22 @@ Requires:
                             figureCaption.innerText = "Image Caption";
                             figureCaption.addEventListener('click', function() {
                                 var caption = prompt("Enter Image Caption", this.innerText);
-                                this.innerText = caption || "image Caption";
-                                this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
-                                this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                                this.innerText = caption || "Image Caption";
+                                if (this.innerText !== 'Image Caption') {
+                                    this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
+                                    this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                                }
                             });
 
                             var fiqureCredits = document.createElement('span');
-                            fiqureCredits.innerText = "Image credits";
+                            fiqureCredits.innerText = "Image Credits";
                             fiqureCredits.addEventListener('click', function() {
                                 var credits = prompt("Enter Image Credits", this.innerText);
-                                this.innerText = credits || "Image credits";
-                                this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                                this.innerText = credits || "Image Credits";
+                                if (this.innerText !== 'Image Credits') {
+                                    this.innerText = credits || "Image Credits";
+                                    this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                                }
                             });
 
                             figure.appendChild(image);
