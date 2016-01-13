@@ -333,74 +333,76 @@
             // };
 
             function insertFigure() {
-
+                var vm = this;
                 if (this.files && this.files[0]) {
                     var reader = new FileReader();
 
                     reader.onload = function(e) {
-
+                        vm.value = '';
                         var image = document.createElement('img');
                         image.setAttribute('src', e.target.result);
+                        $timeout(function(){
+                            if(image.naturalWidth > 500 ) {
 
-                        if(image.naturalWidth > 500 ) {
+                                var figure = document.createElement('figure');
 
-                            var figure = document.createElement('figure');
+                                var figureCaption = document.createElement('figcaption');
 
-                            var figureCaption = document.createElement('figcaption');
+                                figureCaption.innerText = "Image Caption";
+                                figureCaption.addEventListener('click', function() {
+                                    var caption = prompt("Enter Image Caption", this.innerText);
+                                    this.innerText = caption || "Image Caption";
+                                    if (this.innerText !== 'Image Caption') {
+                                        this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
+                                        this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                                    }
+                                });
 
-                            figureCaption.innerText = "Image Caption";
-                            figureCaption.addEventListener('click', function() {
-                                var caption = prompt("Enter Image Caption", this.innerText);
-                                this.innerText = caption || "Image Caption";
-                                if (this.innerText !== 'Image Caption') {
-                                    this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
-                                    this.parentNode.firstChild.setAttribute('alt', this.innerText);
-                                }
-                            });
-
-                            var fiqureCredits = document.createElement('span');
-                            fiqureCredits.innerText = "Image Credits";
-                            fiqureCredits.addEventListener('click', function() {
-                                var credits = prompt("Enter Image Credits", this.innerText);
-                                this.innerText = credits || "Image Credits";
-                                if (this.innerText !== 'Image Credits') {
+                                var fiqureCredits = document.createElement('span');
+                                fiqureCredits.innerText = "Image Credits";
+                                fiqureCredits.addEventListener('click', function() {
+                                    var credits = prompt("Enter Image Credits", this.innerText);
                                     this.innerText = credits || "Image Credits";
-                                    this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                                    if (this.innerText !== 'Image Credits') {
+                                        this.innerText = credits || "Image Credits";
+                                        this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                                    }
+                                });
+
+                                figure.appendChild(image);
+                                figure.appendChild(figureCaption);
+                                figure.appendChild(fiqureCredits);
+
+                                var sel, range;
+                                sel = window.getSelection();
+
+                                if (sel.getRangeAt && sel.rangeCount) {
+
+                                    range = sel.getRangeAt(0);
+                                    range.insertNode(figure);
+
+                                    if (figure.parentNode.getAttribute('id') === "question") {
+                                        figure.contentEditable = false;
+                                    } else {
+                                        figure.parentNode.contentEditable = "false";
+                                    }
+
+                                    if (figure) {
+                                        range = range.cloneRange();
+                                        range.setStartAfter(figure.parentNode);
+                                        range.collapse(true);
+                                        var ell = document.createElement('div');
+                                        ell.innerHTML = "<br>";
+                                        range.insertNode(ell);
+                                        sel.removeAllRanges();
+                                        sel.addRange(range);
+                                    }
                                 }
-                            });
-
-                            figure.appendChild(image);
-                            figure.appendChild(figureCaption);
-                            figure.appendChild(fiqureCredits);
-
-                            var sel, range;
-                            sel = window.getSelection();
-
-                            if (sel.getRangeAt && sel.rangeCount) {
-
-                                range = sel.getRangeAt(0);
-                                range.insertNode(figure);
-
-                                if (figure.parentNode.getAttribute('id') === "question") {
-                                    figure.contentEditable = false;
-                                } else {
-                                    figure.parentNode.contentEditable = "false";
-                                }
-
-                                if (figure) {
-                                    range = range.cloneRange();
-                                    range.setStartAfter(figure.parentNode);
-                                    range.collapse(true);
-                                    var ell = document.createElement('div');
-                                    ell.innerHTML = "<br>";
-                                    range.insertNode(ell);
-                                    sel.removeAllRanges();
-                                    sel.addRange(range);
-                                }
+                            } else {
+                                scope.$emit('editor-error', {error: 'Image should be at least 500px wide'});
                             }
-                        } else {
-                            scope.$emit('editor-error', {error: 'Image should be at least 500px wide'});
-                        }
+                        }, 200);
+
                     }
                     reader.readAsDataURL(this.files[0]);
                 }
