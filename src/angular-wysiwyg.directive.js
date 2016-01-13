@@ -672,7 +672,7 @@
 
                     var el = document.createElement("div");
                     el.setAttribute('data-link', facebookUrl);
-                    el.classList.add('facebook_embed_wrapper');
+                    el.classList.add('facebook_video_embed_wrapper');
 
                     el.innerHTML = '<div class="fb-video" data-href="' + facebookUrl + '" data-allowfullscreen="true"></div>';
                     range.insertNode(el);
