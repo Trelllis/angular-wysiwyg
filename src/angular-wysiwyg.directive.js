@@ -349,23 +349,27 @@
                                 var figureCaption = document.createElement('figcaption');
 
                                 figureCaption.innerText = "Image Caption";
+                                figureCaption.classList.add('remove_tag');
                                 figureCaption.addEventListener('click', function() {
                                     var caption = prompt("Enter Image Caption", this.innerText);
                                     this.innerText = caption || "Image Caption";
                                     if (this.innerText !== 'Image Caption') {
                                         this.parentNode.firstChild.setAttribute('data-caption', this.innerText);
                                         this.parentNode.firstChild.setAttribute('alt', this.innerText);
+                                        this.classList.remove('remove_tag');
                                     }
                                 });
 
                                 var fiqureCredits = document.createElement('span');
                                 fiqureCredits.innerText = "Image Credits";
+                                fiqureCredits.classList.add('remove_tag');
                                 fiqureCredits.addEventListener('click', function() {
                                     var credits = prompt("Enter Image Credits", this.innerText);
                                     this.innerText = credits || "Image Credits";
                                     if (this.innerText !== 'Image Credits') {
                                         this.innerText = credits || "Image Credits";
                                         this.parentNode.firstChild.setAttribute('data-credits', this.innerText);
+                                        this.classList.remove('remove_tag');
                                     }
                                 });
 
