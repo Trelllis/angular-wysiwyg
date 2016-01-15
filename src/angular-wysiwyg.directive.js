@@ -390,6 +390,8 @@
                                     } else {
                                         figure.parentNode.contentEditable = "false";
                                     }
+                                    var addedBreakLine = figure.nextSibling;
+                                    figure.parentNode.removeChild(addedBreakLine);
 
                                     if (figure) {
                                         range = range.cloneRange();
@@ -454,6 +456,8 @@
                             } else {
                                 el.parentNode.contentEditable = "false";
                             }
+                            var addedBreakLine = el.nextSibling;
+                            el.parentNode.removeChild(addedBreakLine);
 
                             instgrm.Embeds.process();
 
@@ -515,6 +519,8 @@
                             } else {
                                 el.parentNode.contentEditable = "false";
                             }
+                            var addedBreakLine = el.nextSibling;
+                            el.parentNode.removeChild(addedBreakLine);
 
                             if (el) {
                                 range = range.cloneRange();
@@ -573,6 +579,8 @@
                     } else {
                         el.parentNode.contentEditable = "false";
                     }
+                    var addedBreakLine = el.nextSibling;
+                    el.parentNode.removeChild(addedBreakLine);
 
                     $timeout(function() {
                         if (el) {
@@ -630,6 +638,8 @@
                     } else {
                         el.parentNode.contentEditable = "false";
                     }
+                    var addedBreakLine = el.nextSibling;
+                    el.parentNode.removeChild(addedBreakLine);
 
                     $timeout(function() {
                         window.FB.XFBML.parse();
@@ -688,6 +698,8 @@
                     } else {
                         el.parentNode.contentEditable = "false";
                     }
+                    var addedBreakLine = el.nextSibling;
+                    el.parentNode.removeChild(addedBreakLine);
 
                     $timeout(function() {
                         window.FB.XFBML.parse();
@@ -718,14 +730,16 @@
                     if (element.childElementCount > 0) {
                         normalize(element, range)
                     } else {
-                        var el = document.createElement('div');
-                        el.innerHTML = element.textContent;
-                        if (el.innerHTML !== '') {
-                            range.insertNode(el);
-                            range.setStartAfter(el);
+                        var newElement = document.createElement('div');
+                        newElement.innerHTML = element.textContent;
+                        if (newElement.innerHTML !== '') {
+                            range.insertNode(newElement);
+                            range.setStartAfter(newElement);
                         }
                     }
                 });
+
+                el.parentNode.removeChild(el);
             }
         }
     };

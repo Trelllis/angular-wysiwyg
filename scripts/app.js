@@ -62,6 +62,12 @@ app.controller('MyCtrl', function($scope) {
     });
 
     $scope.sendData = function () {
+
+      $('.remove_tag').each(function() {
+        console.log(this);
+        this.remove();
+      });
+
       console.log($scope.data.text);
       var z = [];
       var t = document.getElementById("question").childNodes;
@@ -69,9 +75,9 @@ app.controller('MyCtrl', function($scope) {
       var div_array = Array.prototype.slice.call(t);
       div_array.forEach(function(element, index, array){
         var el = element.outerHTML || element.textContent;
-        if (el !== '<div></div>') {
+        // if (el !== '<div></div>') {
             z.push(el);
-          }
+          // }
       });
 
       console.log(z);

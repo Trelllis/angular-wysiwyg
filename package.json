@@ -1,6 +1,6 @@
 {
   "name": "angular-wysiwyg",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "description": "AngularJS WYSIWYG editor",
   "main": "./dist/angular-azure-wysiwyg.min.js",
   "scripts": {
