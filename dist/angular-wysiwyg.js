@@ -222,7 +222,7 @@ Requires:
 
                 textarea.on('input keyup mouseup focus', function(event) {
                     var html = textarea.html();
-                    if(!textarea[0].childNodes[0] || textarea[0].childNodes[0].nodeName === "#text" || textarea[0].childNodes[0].nodeName === "BR"){
+                    if (!textarea[0].childNodes[0] || textarea[0].childNodes[0].nodeName === "#text" || textarea[0].childNodes[0].nodeName === "BR") {
                         scope.format('formatBlock', '<div>');
                     }
                     ngModelController.$setViewValue(html);
@@ -236,18 +236,18 @@ Requires:
 
                 textarea.on('keyup', function(event) {
 
-                    if(event.keyCode === 13) {
-                        if(scope.cmdState('bold')){
+                    if (event.keyCode === 13) {
+                        if (scope.cmdState('bold')) {
                             scope.format('bold');
                         }
-                        if(scope.cmdState('underline')){
+                        if (scope.cmdState('underline')) {
                             scope.format('underline');
                         }
                     }
                 });
 
                 textarea.on('click keyup focus mouseup', function() {
-                // $timeout(function() {
+                    // $timeout(function() {
                     scope.isBold = scope.cmdState('bold');
                     scope.isUnderlined = scope.cmdState('underline');
                     scope.isStrikethrough = scope.cmdState('strikethrough');
@@ -292,7 +292,7 @@ Requires:
 
                     // scope.isLink = itemIs('A');
 
-                // }, 0);
+                    // }, 0);
                 });
 
                 var inputElement = document.getElementById("imagesInput");
@@ -395,8 +395,8 @@ Requires:
                         vm.value = '';
                         var image = document.createElement('img');
                         image.setAttribute('src', e.target.result);
-                        $timeout(function(){
-                            if(image.naturalWidth > 500 ) {
+                        $timeout(function() {
+                            if (image.naturalWidth > 500) {
 
                                 var figure = document.createElement('figure');
 
@@ -417,6 +417,12 @@ Requires:
                                 var fiqureCredits = document.createElement('span');
                                 fiqureCredits.innerText = "Image Credits";
                                 fiqureCredits.classList.add('remove_tag');
+
+                                figure.appendChild(image);
+                                console.log(figure);
+                                figure.appendChild(figureCaption);
+                                figure.appendChild(fiqureCredits);
+
                                 fiqureCredits.addEventListener('click', function() {
                                     var credits = prompt("Enter Image Credits", this.innerText);
                                     this.innerText = credits || "Image Credits";
@@ -427,9 +433,6 @@ Requires:
                                     }
                                 });
 
-                                figure.appendChild(image);
-                                figure.appendChild(figureCaption);
-                                figure.appendChild(fiqureCredits);
 
                                 var sel, range;
                                 sel = window.getSelection();
@@ -437,29 +440,25 @@ Requires:
                                 if (sel.getRangeAt && sel.rangeCount) {
 
                                     range = sel.getRangeAt(0);
-                                    range.insertNode(figure);
 
-                                    if (figure.parentNode.getAttribute('id') === "question") {
-                                        figure.contentEditable = false;
-                                    } else {
-                                        figure.parentNode.contentEditable = "false";
+                                    if (range.startContainer.nodeName !== 'DIV') {
+                                        range.startContainer.parentNode.removeChild(range.startContainer);
                                     }
-                                    var addedBreakLine = figure.nextSibling;
-                                    figure.parentNode.removeChild(addedBreakLine);
 
-                                    if (figure) {
-                                        range = range.cloneRange();
-                                        range.setStartAfter(figure.parentNode);
-                                        range.collapse(true);
-                                        var ell = document.createElement('div');
-                                        ell.innerHTML = "<br>";
-                                        range.insertNode(ell);
-                                        sel.removeAllRanges();
-                                        sel.addRange(range);
-                                    }
+
+                                    range.startContainer.contentEditable = "false";
+                                    range.startContainer.innerHTML = '';
+                                    range.startContainer.appendChild(figure);
+                                    range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                                    range.setStartAfter(range.startContainer);
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+
                                 }
                             } else {
-                                scope.$emit('editor-error', {error: 'Image should be at least 500px wide'});
+                                scope.$emit('editor-error', {
+                                    error: 'Image should be at least 500px wide'
+                                });
                             }
                         }, 200);
 
@@ -485,8 +484,10 @@ Requires:
                     inputPlaceholder: "Instagram Url",
                     showLoaderOnConfirm: true
                 }, function(instagramUrl) {
+                    if (instagramUrl === false) return false;
+
                     var trimedUrl = instagramUrl.trim();
-                    if (trimedUrl === false) return false;
+
 
                     if (trimedUrl === '' || trimedUrl === null || trimedUrl.indexOf('instagram') === -1) {
                         swal.showInputError('Enter a valid Instagram Url');
@@ -503,28 +504,21 @@ Requires:
                         .then(function(response) {
 
                             el.innerHTML = response.html;
-                            range.insertNode(el);
 
-                            if (el.parentNode.getAttribute('id') === "question") {
-                                el.contentEditable = false;
-                            } else {
-                                el.parentNode.contentEditable = "false";
+                            console.log(range);
+                            if (range.startContainer.nodeName !== 'DIV') {
+                                range.startContainer.parentNode.removeChild(range.startContainer);
                             }
-                            var addedBreakLine = el.nextSibling;
-                            el.parentNode.removeChild(addedBreakLine);
+
+                            range.startContainer.contentEditable = "false";
+                            range.startContainer.innerHTML = '';
+                            range.startContainer.appendChild(el);
+                            range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                            range.setStartAfter(range.startContainer);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
 
                             instgrm.Embeds.process();
-
-                            if (el) {
-                                range = range.cloneRange();
-                                range.setStartAfter(el.parentNode);
-                                range.collapse(true);
-                                var ell = document.createElement('div');
-                                ell.innerHTML = "<br>";
-                                range.insertNode(ell);
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
 
                             swal.close();
                             scope.$emit('embed-instagram:finish');
@@ -548,8 +542,9 @@ Requires:
                     inputPlaceholder: "Tweet Url",
                     showLoaderOnConfirm: true
                 }, function(twitterUrl) {
-                    var trimedUrl = twitterUrl.trim()
                     if (trimedUrl === false) return false;
+
+                    var trimedUrl = twitterUrl.trim();
 
                     if (trimedUrl === '' || trimedUrl === null || trimedUrl.indexOf('twitter') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
@@ -566,26 +561,17 @@ Requires:
                         .then(function(response) {
 
                             el.innerHTML = response.html;
-                            range.insertNode(el);
 
-                            if (el.parentNode.getAttribute('id') === "question") {
-                                el.contentEditable = false;
-                            } else {
-                                el.parentNode.contentEditable = "false";
+                            if (range.startContainer.nodeName !== 'DIV') {
+                                range.startContainer.parentNode.removeChild(range.startContainer);
                             }
-                            var addedBreakLine = el.nextSibling;
-                            el.parentNode.removeChild(addedBreakLine);
-
-                            if (el) {
-                                range = range.cloneRange();
-                                range.setStartAfter(el.parentNode);
-                                range.collapse(true);
-                                var ell = document.createElement('div');
-                                ell.innerHTML = "<br>";
-                                range.insertNode(ell);
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
+                            range.startContainer.contentEditable = "false";
+                            range.startContainer.innerHTML = '';
+                            range.startContainer.appendChild(el);
+                            range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                            range.setStartAfter(range.startContainer);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
 
                             swal.close();
                             scope.$emit('embed-twitter:finish');
@@ -610,9 +596,9 @@ Requires:
                     showLoaderOnConfirm: true
                 }, function(youtubeUrl) {
 
-                    var trimedUrl = youtubeUrl.trim();
-
                     if (trimedUrl === false) return false;
+
+                    var trimedUrl = youtubeUrl.trim();
 
                     if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('youtu') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
@@ -628,29 +614,18 @@ Requires:
                     el.classList.add('youtube_player_wrapper');
 
                     el.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + guid[0].substring(3) + '" ' + 'frameborder="0" allowfullscreen></iframe>';
-                    range.insertNode(el);
 
-                    if (el.parentNode.getAttribute('id') === "question") {
-                        el.contentEditable = false;
-                    } else {
-                        el.parentNode.contentEditable = "false";
+                    if (range.startContainer.nodeName !== 'DIV') {
+                        range.startContainer.parentNode.removeChild(range.startContainer);
                     }
-                    var addedBreakLine = el.nextSibling;
-                    el.parentNode.removeChild(addedBreakLine);
 
-                    $timeout(function() {
-                        if (el) {
-                            range = range.cloneRange();
-                            range.setStartAfter(el.parentNode);
-                            range.collapse(true);
-                            var ell = document.createElement('div');
-                            ell.innerHTML = "<br>";
-                            range.insertNode(ell);
-                            sel.removeAllRanges();
-                            sel.addRange(range);
-                        }
-                    }, 500);
-
+                    range.startContainer.contentEditable = "false";
+                    range.startContainer.innerHTML = '';
+                    range.startContainer.appendChild(el);
+                    range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                    range.setStartAfter(range.startContainer);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
                     swal.close();
                     scope.$emit('embed-youtube:finish');
                 });
@@ -672,9 +647,9 @@ Requires:
                     inputPlaceholder: "Facebook Url",
                     showLoaderOnConfirm: true
                 }, function(facebookUrl) {
-                    var trimedUrl = facebookUrl.trim();
-
                     if (trimedUrl === false) return false;
+
+                    var trimedUrl = facebookUrl.trim();
 
                     if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('facebook') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
@@ -688,32 +663,22 @@ Requires:
                     el.classList.add('facebook_embed_wrapper');
 
                     el.innerHTML = '<div class="fb-post" data-href="' + trimedUrl + '"></div>';
-                    range.insertNode(el);
 
-                    if (el.parentNode.getAttribute('id') === "question") {
-                        el.contentEditable = false;
-                    } else {
-                        el.parentNode.contentEditable = "false";
+                    if (range.startContainer.nodeName !== 'DIV') {
+                        range.startContainer.parentNode.removeChild(range.startContainer);
                     }
-                    var addedBreakLine = el.nextSibling;
-                    el.parentNode.removeChild(addedBreakLine);
+                    range.startContainer.contentEditable = "false";
+                    range.startContainer.innerHTML = '';
+                    range.startContainer.appendChild(el);
+                    range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                    range.setStartAfter(range.startContainer);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    window.FB.XFBML.parse();
 
-                    $timeout(function() {
-                        window.FB.XFBML.parse();
-                        if (el) {
-                            range = range.cloneRange();
-                            range.setStartAfter(el.parentNode);
-                            range.collapse(true);
-                            var ell = document.createElement("div");
-                            ell.innerHTML = "<br>";
-                            range.insertNode(ell);
-                            sel.removeAllRanges();
-                            sel.addRange(range);
-                        }
+                    swal.close();
+                    scope.$emit('embed-facebook:finish');
 
-                        swal.close();
-                        scope.$emit('embed-facebook:finish');
-                    }, 100);
                 });
             }
 
@@ -733,9 +698,10 @@ Requires:
                     inputPlaceholder: "Facebook Url",
                     showLoaderOnConfirm: true
                 }, function(facebookUrl) {
-                    var trimedUrl = facebookUrl.trim();
 
                     if (trimedUrl === false) return false;
+
+                    var trimedUrl = facebookUrl.trim();
 
                     if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('facebook') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
@@ -749,32 +715,20 @@ Requires:
                     el.classList.add('facebook_video_embed_wrapper');
 
                     el.innerHTML = '<div class="fb-video" data-href="' + trimedUrl + '" data-allowfullscreen="true"></div>';
-                    range.insertNode(el);
 
-                    if (el.parentNode.getAttribute('id') === "question") {
-                        el.contentEditable = false;
-                    } else {
-                        el.parentNode.contentEditable = "false";
+                    if (range.startContainer.nodeName !== 'DIV') {
+                        range.startContainer.parentNode.removeChild(range.startContainer);
                     }
-                    var addedBreakLine = el.nextSibling;
-                    el.parentNode.removeChild(addedBreakLine);
-
-                    $timeout(function() {
-                        window.FB.XFBML.parse();
-                        if (el) {
-                            range = range.cloneRange();
-                            range.setStartAfter(el.parentNode);
-                            range.collapse(true);
-                            var ell = document.createElement("div");
-                            ell.innerHTML = "<br>";
-                            range.insertNode(ell);
-                            sel.removeAllRanges();
-                            sel.addRange(range);
-                        }
-
-                        swal.close();
-                        scope.$emit('embed-facebook:finish');
-                    }, 100);
+                    range.startContainer.contentEditable = "false";
+                    range.startContainer.innerHTML = '';
+                    range.startContainer.appendChild(el);
+                    range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
+                    range.setStartAfter(range.startContainer);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    window.FB.XFBML.parse();
+                    swal.close();
+                    scope.$emit('embed-facebook:finish');
                 });
             }
 
@@ -788,8 +742,8 @@ Requires:
                 var sel, range;
                 sel = window.getSelection();
                 range = sel.getRangeAt(0);
-                elArray.forEach(function(element, index, array){
-                    if(element.length > 1){
+                elArray.forEach(function(element, index, array) {
+                    if (element.length > 1) {
                         var newElement = document.createElement('div');
                         newElement.innerHTML = element;
                         range.insertNode(newElement);
@@ -804,13 +758,13 @@ Requires:
                 var children = Array.prototype.slice.call(el.childNodes);
                 children.forEach(function(element, index, array) {
 
-                    if(element.nodeName !== '#comment' && element.nodeName !== '#text'){
+                    if (element.nodeName !== '#comment' && element.nodeName !== '#text') {
                         if (element.childElementCount > 1) {
                             normalize(element, range)
                         } else {
                             var newElement = document.createElement('div');
                             console.dir(element);
-                            newElement.innerHTML = element.textContent;
+                            newElement.innerHTML = element.textContent.trim();
                             if (newElement.innerHTML !== '') {
                                 range.insertNode(newElement);
                                 range.setStartAfter(newElement);
