@@ -159,10 +159,8 @@
 
                 textarea.on('input keyup mouseup focus', function(event) {
                     var html = textarea.html();
-                    if (html == '' || html == '<br>') {
-                        var div = document.createElement("div");
-                        div.innerHTML = "<br>";
-                        textarea[0].appendChild(div);
+                    if(!textarea[0].childNodes[0] || textarea[0].childNodes[0].nodeName === "#text" || textarea[0].childNodes[0].nodeName === "BR"){
+                        scope.format('formatBlock', '<div>');
                     }
                     ngModelController.$setViewValue(html);
                 });
@@ -174,21 +172,18 @@
                         range = sel.getRangeAt(0);
                         range.setStartAfter(event.currentTarget);
                         normalize(event.currentTarget, range);
-                        event.currentTarget.innerHTML = '';
                     }, 200);
                 });
 
-                textarea.on('keydown', function(event) {
-                    if (event.keyCode == 9) {
-                        var TAB_SPACES = 4;
-                        var html = textarea.html();
-                        var selection = window.getSelection();
-                        var position = selection.anchorOffset;
+                textarea.on('keyup', function(event) {
 
-                        event.preventDefault();
-                        // html = insertTab(html, position);
-                        // textarea.html(html);
-                        // selection.collapse(textarea[0].firstChild, position + TAB_SPACES);
+                    if(event.keyCode === 13) {
+                        if(scope.cmdState('bold')){
+                            scope.format('bold');
+                        }
+                        if(scope.cmdState('underline')){
+                            scope.format('underline');
+                        }
                     }
                 });
 
@@ -558,7 +553,7 @@
 
                     if (youtubeUrl === false) return false;
 
-                    if (youtubeUrl === "" && youtubeUrl === null && youtubeUrl.indexOf('youtube') === -1) {
+                    if (youtubeUrl === "" && youtubeUrl === null && youtubeUrl.indexOf('youtu') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
                         return false;
                     }
@@ -721,22 +716,28 @@
             }
 
             scope.format('enableobjectresizing', true);
-            scope.format('styleWithCSS', true);
+            scope.format('styleWithCSS', false);
 
             function normalize(el, range) {
                 var children = Array.prototype.slice.call(el.childNodes);
                 children.forEach(function(element, index, array) {
 
-                    if (element.childElementCount > 0) {
-                        normalize(element, range)
-                    } else {
-                        var newElement = document.createElement('div');
-                        newElement.innerHTML = element.textContent;
-                        if (newElement.innerHTML !== '') {
-                            range.insertNode(newElement);
-                            range.setStartAfter(newElement);
+                    if(element.nodeName !== '#comment' && element.nodeName !== '#text'){
+                        if (element.childElementCount > 1) {
+                            normalize(element, range)
+                        } else {
+                            var newElement = document.createElement('div');
+                            console.dir(element);
+                            newElement.innerHTML = element.textContent;
+                            if (newElement.innerHTML !== '') {
+                                range.insertNode(newElement);
+                                range.setStartAfter(newElement);
+                            }
                         }
                     }
+
+
+
                 });
 
                 el.parentNode.removeChild(el);
