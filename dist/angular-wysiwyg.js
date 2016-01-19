@@ -230,11 +230,7 @@ Requires:
 
                 textarea.on('paste', 'div', function(event) {
                     $timeout(function() {
-                        var sel, range;
-                        sel = window.getSelection();
-                        range = sel.getRangeAt(0);
-                        range.setStartAfter(event.currentTarget);
-                        normalize(event.currentTarget, range);
+                        addContent(event.currentTarget);
                     }, 200);
                 });
 
@@ -784,6 +780,25 @@ Requires:
 
             scope.format('enableobjectresizing', true);
             scope.format('styleWithCSS', false);
+
+            function addContent(el, range) {
+
+                var elArray = el.outerText.replace(/\n/g, "###").split("###");
+                el.parentNode.removeChild(el);
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+                elArray.forEach(function(element, index, array){
+                    if(element.length > 1){
+                        var newElement = document.createElement('div');
+                        newElement.innerHTML = element;
+                        range.insertNode(newElement);
+                        range.setStartAfter(newElement);
+                    }
+                });
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
 
             function normalize(el, range) {
                 var children = Array.prototype.slice.call(el.childNodes);

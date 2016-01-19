@@ -167,11 +167,7 @@
 
                 textarea.on('paste', 'div', function(event) {
                     $timeout(function() {
-                        var sel, range;
-                        sel = window.getSelection();
-                        range = sel.getRangeAt(0);
-                        range.setStartAfter(event.currentTarget);
-                        normalize(event.currentTarget, range);
+                        addContent(event.currentTarget);
                     }, 200);
                 });
 
@@ -426,10 +422,10 @@
                     inputPlaceholder: "Instagram Url",
                     showLoaderOnConfirm: true
                 }, function(instagramUrl) {
+                    var trimedUrl = instagramUrl.trim();
+                    if (trimedUrl === false) return false;
 
-                    if (instagramUrl === false) return false;
-
-                    if (instagramUrl === '' || instagramUrl === null || instagramUrl.indexOf('instagram') === -1) {
+                    if (trimedUrl === '' || trimedUrl === null || trimedUrl.indexOf('instagram') === -1) {
                         swal.showInputError('Enter a valid Instagram Url');
                         return false;
                     }
@@ -438,9 +434,9 @@
 
                     var el = document.createElement('div');
                     el.classList.add('instagram_embed_wrapper');
-                    el.setAttribute('data-link', instagramUrl);
+                    el.setAttribute('data-link', trimedUrl);
 
-                    socialEmbeds.getInstagramEmbed(instagramUrl)
+                    socialEmbeds.getInstagramEmbed(trimedUrl)
                         .then(function(response) {
 
                             el.innerHTML = response.html;
@@ -489,10 +485,10 @@
                     inputPlaceholder: "Tweet Url",
                     showLoaderOnConfirm: true
                 }, function(twitterUrl) {
+                    var trimedUrl = twitterUrl.trim()
+                    if (trimedUrl === false) return false;
 
-                    if (twitterUrl === false) return false;
-
-                    if (twitterUrl === '' || twitterUrl === null || twitterUrl.indexOf('twitter') === -1) {
+                    if (trimedUrl === '' || trimedUrl === null || trimedUrl.indexOf('twitter') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
                         return false;
                     }
@@ -501,9 +497,9 @@
 
                     var el = document.createElement('div');
                     el.classList.add('twitter_embed_wrapper');
-                    el.setAttribute('data-link', twitterUrl);
+                    el.setAttribute('data-link', trimedUrl);
 
-                    socialEmbeds.getTwitterEmbed(twitterUrl)
+                    socialEmbeds.getTwitterEmbed(trimedUrl)
                         .then(function(response) {
 
                             el.innerHTML = response.html;
@@ -551,16 +547,18 @@
                     showLoaderOnConfirm: true
                 }, function(youtubeUrl) {
 
-                    if (youtubeUrl === false) return false;
+                    var trimedUrl = youtubeUrl.trim();
 
-                    if (youtubeUrl === "" && youtubeUrl === null && youtubeUrl.indexOf('youtu') === -1) {
+                    if (trimedUrl === false) return false;
+
+                    if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('youtu') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
                         return false;
                     }
 
                     scope.$emit('embed-youtube:start');
 
-                    var guid = youtubeUrl.match(/(\?|&)v=[^&]*/);
+                    var guid = trimedUrl.match(/(\?|&)v=[^&]*/);
 
                     var el = document.createElement("div");
                     el.setAttribute('data-link', 'https://www.youtube.com/embed/' + guid[0].substring(3));
@@ -611,10 +609,11 @@
                     inputPlaceholder: "Facebook Url",
                     showLoaderOnConfirm: true
                 }, function(facebookUrl) {
+                    var trimedUrl = facebookUrl.trim();
 
-                    if (facebookUrl === false) return false;
+                    if (trimedUrl === false) return false;
 
-                    if (facebookUrl === "" && facebookUrl === null && facebookUrl.indexOf('facebook') === -1) {
+                    if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('facebook') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
                         return false;
                     }
@@ -622,10 +621,10 @@
                     scope.$emit('embed-facebook:start');
 
                     var el = document.createElement("div");
-                    el.setAttribute('data-link', facebookUrl);
+                    el.setAttribute('data-link', trimedUrl);
                     el.classList.add('facebook_embed_wrapper');
 
-                    el.innerHTML = '<div class="fb-post" data-href="' + facebookUrl + '"></div>';
+                    el.innerHTML = '<div class="fb-post" data-href="' + trimedUrl + '"></div>';
                     range.insertNode(el);
 
                     if (el.parentNode.getAttribute('id') === "question") {
@@ -671,10 +670,11 @@
                     inputPlaceholder: "Facebook Url",
                     showLoaderOnConfirm: true
                 }, function(facebookUrl) {
+                    var trimedUrl = facebookUrl.trim();
 
-                    if (facebookUrl === false) return false;
+                    if (trimedUrl === false) return false;
 
-                    if (facebookUrl === "" && facebookUrl === null && facebookUrl.indexOf('facebook') === -1) {
+                    if (trimedUrl === "" && trimedUrl === null && trimedUrl.indexOf('facebook') === -1) {
                         swal.showInputError('Enter a valid twitter Url');
                         return false;
                     }
@@ -682,10 +682,10 @@
                     scope.$emit('embed-facebook:start');
 
                     var el = document.createElement("div");
-                    el.setAttribute('data-link', facebookUrl);
+                    el.setAttribute('data-link', trimedUrl);
                     el.classList.add('facebook_video_embed_wrapper');
 
-                    el.innerHTML = '<div class="fb-video" data-href="' + facebookUrl + '" data-allowfullscreen="true"></div>';
+                    el.innerHTML = '<div class="fb-video" data-href="' + trimedUrl + '" data-allowfullscreen="true"></div>';
                     range.insertNode(el);
 
                     if (el.parentNode.getAttribute('id') === "question") {
@@ -718,6 +718,25 @@
             scope.format('enableobjectresizing', true);
             scope.format('styleWithCSS', false);
 
+            function addContent(el, range) {
+
+                var elArray = el.outerText.replace(/\n/g, "###").split("###");
+                el.parentNode.removeChild(el);
+                var sel, range;
+                sel = window.getSelection();
+                range = sel.getRangeAt(0);
+                elArray.forEach(function(element, index, array){
+                    if(element.length > 1){
+                        var newElement = document.createElement('div');
+                        newElement.innerHTML = element;
+                        range.insertNode(newElement);
+                        range.setStartAfter(newElement);
+                    }
+                });
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+
             function normalize(el, range) {
                 var children = Array.prototype.slice.call(el.childNodes);
                 children.forEach(function(element, index, array) {
@@ -735,11 +754,7 @@
                             }
                         }
                     }
-
-
-
                 });
-
                 el.parentNode.removeChild(el);
             }
         }
