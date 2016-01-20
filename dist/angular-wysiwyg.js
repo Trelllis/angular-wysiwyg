@@ -85,6 +85,7 @@ Requires:
                 textareaCustomMenu: '=textareaCustomMenu',
                 fn: '&',
                 disabled: '=?disabled',
+                minImagesWidth: '@'
             },
             replace: true,
             require: 'ngModel',
@@ -396,7 +397,8 @@ Requires:
                         var image = document.createElement('img');
                         image.setAttribute('src', e.target.result);
                         $timeout(function() {
-                            if (image.naturalWidth > 500) {
+
+                            if (image.naturalWidth >= parseInt(scope.minImagesWidth, 10)) {
 
                                 var figure = document.createElement('figure');
 
@@ -457,7 +459,7 @@ Requires:
                                 }
                             } else {
                                 scope.$emit('editor-error', {
-                                    error: 'Image should be at least 500px wide'
+                                    error: 'Image should be at least ' + scope.minImagesWidth + 'px wide'
                                 });
                             }
                         }, 200);
