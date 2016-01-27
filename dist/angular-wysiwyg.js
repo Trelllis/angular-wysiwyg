@@ -393,12 +393,23 @@ Requires:
                     var reader = new FileReader();
 
                     reader.onload = function(e) {
-                        vm.value = '';
                         var image = document.createElement('img');
-                        image.setAttribute('src', e.target.result);
-                        $timeout(function() {
+                        var fakeImage = document.createElement('img');
+                        fakeImage.setAttribute('src', e.target.result);
 
-                            if (image.naturalWidth >= parseInt(scope.minImagesWidth, 10)) {
+                        var canvas = document.createElement('canvas');
+                        var context = canvas.getContext('2d');
+
+                        fakeImage.onload = function() {
+
+                            console.log(vm.files[0].type);
+                            if (vm.files[0].type === 'image/gif') {
+                                var minWidth = 250;
+                            } else {
+                                var minWidth = parseInt(scope.minImagesWidth, 10);
+                            }
+
+                            if (fakeImage.naturalWidth >= minWidth) {
 
                                 var figure = document.createElement('figure');
 
@@ -420,11 +431,6 @@ Requires:
                                 fiqureCredits.innerText = "Image Credits";
                                 fiqureCredits.classList.add('remove_tag');
 
-                                figure.appendChild(image);
-                                console.log(figure);
-                                figure.appendChild(figureCaption);
-                                figure.appendChild(fiqureCredits);
-
                                 fiqureCredits.addEventListener('click', function() {
                                     var credits = prompt("Enter Image Credits", this.innerText);
                                     this.innerText = credits || "Image Credits";
@@ -435,6 +441,7 @@ Requires:
                                     }
                                 });
 
+                                figure.appendChild(fakeImage);
 
                                 var sel, range;
                                 sel = window.getSelection();
@@ -451,19 +458,41 @@ Requires:
                                     range.startContainer.contentEditable = "false";
                                     range.startContainer.innerHTML = '';
                                     range.startContainer.appendChild(figure);
+
+
+                                    if (vm.files[0].type !== 'image/gif') {
+
+                                        canvas.width = fakeImage.naturalWidth;
+                                        canvas.height = fakeImage.naturalHeight;
+
+                                        context.drawImage(this, 0, 0);
+                                        resample_hermite(canvas, fakeImage.naturalWidth, fakeImage.naturalHeight, fakeImage.width, fakeImage.height);
+
+                                        var dataURL = canvas.toDataURL("image/jpeg", 1.0);
+                                        image.setAttribute('src', dataURL);
+
+                                        range.startContainer.firstChild.innerHTML = ''
+                                        figure.appendChild(image);
+
+                                    }
+
+                                    figure.appendChild(figureCaption);
+                                    figure.appendChild(fiqureCredits);
+
                                     range.startContainer.insertAdjacentHTML('afterend', '<div><br></div>');
                                     range.setStartAfter(range.startContainer);
                                     sel.removeAllRanges();
                                     sel.addRange(range);
 
                                 }
+
+                                vm.value = '';
                             } else {
                                 scope.$emit('editor-error', {
                                     error: 'Image should be at least ' + scope.minImagesWidth + 'px wide'
                                 });
                             }
-                        }, 200);
-
+                        }
                     }
                     reader.readAsDataURL(this.files[0]);
                 }
