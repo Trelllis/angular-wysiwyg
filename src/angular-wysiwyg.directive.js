@@ -405,7 +405,7 @@
                                         context.drawImage(this, 0, 0);
                                         resample_hermite(canvas, fakeImage.naturalWidth, fakeImage.naturalHeight, fakeImage.width, fakeImage.height);
 
-                                        var dataURL = canvas.toDataURL("image/jpeg", 1.0);
+                                        var dataURL = canvas.toDataURL("image/jpeg", 0.8);
                                         image.setAttribute('src', dataURL);
 
                                         range.startContainer.firstChild.innerHTML = ''
@@ -425,7 +425,7 @@
                                 vm.value = '';
                             } else {
                                 scope.$emit('editor-error', {
-                                    error: 'Image should be at least ' + scope.minImagesWidth + 'px wide'
+                                    error: 'Image should be at least ' + minWidth + 'px wide'
                                 });
                             }
                         }
