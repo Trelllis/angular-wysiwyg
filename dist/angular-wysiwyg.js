@@ -488,7 +488,7 @@ Requires:
                                 vm.value = '';
                             } else {
                                 scope.$emit('editor-error', {
-                                    error: 'Image should be at least ' + scope.minImagesWidth + 'px wide'
+                                    error: 'Image should be at least ' + minWidth + 'px wide'
                                 });
                             }
                         }
